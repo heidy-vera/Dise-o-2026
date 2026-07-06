@@ -603,105 +603,46 @@ Enviar
 </section>
 
 <!-- REGISTRO DE PEDIDOS -->
-
 <section id="registro">
+    <div class="container">
+        <h2 class="text-center mb-5">Registrar Pedido</h2>
+        
+        <form id="formPedido" class="w-75 mx-auto" novalidate>
+            
+            <div class="mb-3">
+                <label class="form-label">Nombre del cliente</label>
+                <input type="text" id="cliente" class="form-control" placeholder="Ingrese el nombre" required>
+                <div class="invalid-feedback">El nombre debe tener al menos 3 caracteres.</div>
+            </div>
 
-<div class="container">
+            <div class="mb-3">
+                <label class="form-label">Producto</label>
+                <input type="text" id="producto" class="form-control" placeholder="Ingrese el producto" required>
+                <div class="invalid-feedback">Por favor, ingrese un producto válido.</div>
+            </div>
 
-<h2 class="text-center mb-5">
+            <div class="mb-3">
+                <label class="form-label">Categoría</label>
+                <select id="categoria" class="form-select" required>
+                    <option value="">Seleccione una categoría</option>
+                    <option value="Torta">Torta</option>
+                    <option value="Cupcake">Cupcake</option>
+                    <option value="Brownie">Brownie</option>
+                    <option value="Cheesecake">Cheesecake</option>
+                    <option value="Galleta">Galleta</option>
+                    <option value="Dona">Dona</option>
+                </select>
+                <div class="invalid-feedback">Debe seleccionar una categoría.</div>
+            </div>
 
-Registrar Pedido
+            <button type="submit" class="btn btn-success">Registrar Pedido</button>
+        </form>
 
-</h2>
-
-<form id="formPedido" class="w-75 mx-auto">
-
-<div class="mb-3">
-
-<label class="form-label">
-
-Nombre del cliente
-
-</label>
-
-<input
-type="text"
-id="cliente"
-class="form-control"
-placeholder="Ingrese el nombre">
-
-</div>
-
-<div class="mb-3">
-
-<label class="form-label">
-
-Producto
-
-</label>
-
-<input
-type="text"
-id="producto"
-class="form-control"
-placeholder="Ingrese el producto">
-
-</div>
-
-<div class="mb-3">
-
-<label class="form-label">
-
-Categoría
-
-</label>
-
-<select
-id="categoria"
-class="form-select">
-
-<option value="">Seleccione una categoría</option>
-
-<option>Torta</option>
-
-<option>Cupcake</option>
-
-<option>Brownie</option>
-
-<option>Cheesecake</option>
-
-<option>Galleta</option>
-
-<option>Dona</option>
-
-</select>
-
-</div>
-
-<button class="btn btn-success">
-
-Registrar Pedido
-
-</button>
-
-</form>
-
-<div id="mensaje" class="mt-3"></div>
-
-<h4 class="mt-4">
-
-Pedidos registrados:
-<span id="contador">0</span>
-
-</h4>
-
-<div id="listaPedidos"></div>
-
-</div>
-
+        <div id="mensaje" class="mt-3"></div>
+        <h4 class="mt-4">Pedidos registrados: <span id="contador">0</span></h4>
+        <div id="listaPedidos"></div>
+    </div>
 </section>
-
-</main>
 
 <!-- ASIDE -->
 

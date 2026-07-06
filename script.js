@@ -1,80 +1,127 @@
+document.addEventListener("DOMContentLoaded", () => {
 
-// Obtener los elementos del HTML
-const formulario = document.getElementById("formPedido");
-const lista = document.getElementById("listaPedidos");
-const mensaje = document.getElementById("mensaje");
-const contador = document.getElementById("contador");
+    const form = document.getElementById("formPedido");
+    const cliente = document.getElementById("cliente");
+    const producto = document.getElementById("producto");
+    const categoria = document.getElementById("categoria");
 
-// Variable para contar los pedidos
-let total = 0;
+    const lista = document.getElementById("listaPedidos");
+    const contador = document.getElementById("contador");
+    const mensaje = document.getElementById("mensaje");
 
-// Evento al enviar el formulario
-formulario.addEventListener("submit", function(event){
+    let pedidos = JSON.parse(localStorage.getItem("pedidos")) || [];
 
-    // Evita que la página se recargue
-    event.preventDefault();
+    // ---------------------------
+    // GUARDAR EN LOCALSTORAGE
+    // ---------------------------
+    const guardar = () => {
+        localStorage.setItem("pedidos", JSON.stringify(pedidos));
+    };
 
-    // Obtener los datos del formulario
-    const cliente = document.getElementById("cliente").value.trim();
-    const producto = document.getElementById("producto").value.trim();
-    const categoria = document.getElementById("categoria").value;
+    // ---------------------------
+    // MOSTRAR PEDIDOS
+    // ---------------------------
+    const mostrar = () => {
+        lista.innerHTML = "";
+        contador.textContent = pedidos.length;
 
-    // Validación
-    if(cliente === "" || producto === "" || categoria === ""){
+        pedidos.forEach((p, i) => {
+            const div = document.createElement("div");
+            div.className = "alert alert-secondary mt-2";
 
-        mensaje.innerHTML =
-        "<div class='alert alert-danger'>Complete todos los campos.</div>";
+            div.innerHTML = `
+                <strong>${p.cliente}</strong> - 
+                ${p.producto} (${p.categoria})
+                <button class="btn btn-sm btn-danger float-end">Eliminar</button>
+            `;
 
-        return;
-    }
+            div.querySelector("button").addEventListener("click", () => {
+                pedidos.splice(i, 1);
+                guardar();
+                mostrar();
+            });
 
-    // Mensaje de éxito
-    mensaje.innerHTML =
-    "<div class='alert alert-success'>Pedido registrado correctamente.</div>";
+            lista.appendChild(div);
+        });
+    };
 
-    // Crear la tarjeta
-    const tarjeta = document.createElement("div");
-    tarjeta.className = "card shadow p-3 mb-3";
+    // ---------------------------
+    // VALIDACIONES
+    // ---------------------------
+    const validarTexto = (input, min) => {
+        if (input.value.trim().length >= min) {
+            input.classList.add("is-valid");
+            input.classList.remove("is-invalid");
+            return true;
+        } else {
+            input.classList.add("is-invalid");
+            input.classList.remove("is-valid");
+            return false;
+        }
+    };
 
-    // Crear el contenido
-    const texto = document.createElement("p");
+    const validarSelect = (select) => {
+        if (select.value !== "") {
+            select.classList.add("is-valid");
+            select.classList.remove("is-invalid");
+            return true;
+        } else {
+            select.classList.add("is-invalid");
+            select.classList.remove("is-valid");
+            return false;
+        }
+    };
 
-    texto.innerHTML =
-    "<strong>Cliente:</strong> " + cliente +
-    "<br><strong>Producto:</strong> " + producto +
-    "<br><strong>Categoría:</strong> " + categoria;
+    // ---------------------------
+    // VALIDACIÓN EN TIEMPO REAL
+    // ---------------------------
+    cliente.addEventListener("input", () => validarTexto(cliente, 3));
+    producto.addEventListener("input", () => validarTexto(producto, 2));
+    categoria.addEventListener("change", () => validarSelect(categoria));
 
-    // Crear botón eliminar
-    const boton = document.createElement("button");
+    // ---------------------------
+    // SUBMIT
+    // ---------------------------
+    form.addEventListener("submit", (e) => {
+        e.preventDefault();
 
-    boton.textContent = "Eliminar";
+        const v1 = validarTexto(cliente, 3);
+        const v2 = validarTexto(producto, 2);
+        const v3 = validarSelect(categoria);
 
-    boton.className = "btn btn-danger";
+        if (!v1 || !v2 || !v3) {
+            mensaje.innerHTML = `
+                <div class="alert alert-danger">
+                     Por favor complete todos los campos correctamente
+                </div>
+            `;
+            return;
+        }
 
-    // Evento para eliminar
-    boton.addEventListener("click", function(){
+        const nuevo = {
+            cliente: cliente.value.trim(),
+            producto: producto.value.trim(),
+            categoria: categoria.value
+        };
 
-        lista.removeChild(tarjeta);
+        pedidos.push(nuevo);
+        guardar();
 
-        total--;
+        form.reset();
 
-        contador.textContent = total;
+        cliente.classList.remove("is-valid");
+        producto.classList.remove("is-valid");
+        categoria.classList.remove("is-valid");
 
+        mensaje.innerHTML = `
+            <div class="alert alert-success">
+                 Pedido registrado correctamente
+            </div>
+        `;
+
+        mostrar();
     });
 
-    // Agregar elementos a la tarjeta
-    tarjeta.appendChild(texto);
-    tarjeta.appendChild(boton);
-
-    // Mostrar la tarjeta en la página
-    lista.appendChild(tarjeta);
-
-    // Actualizar contador
-    total++;
-
-    contador.textContent = total;
-
-    // Limpiar formulario
-    formulario.reset();
-
+    // Inicializar
+    mostrar();
 });
