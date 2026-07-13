@@ -1,4 +1,114 @@
-// Obtener elementos del formulario
+// ==========================
+// PRODUCTOS DINÁMICOS
+// ==========================
+
+const productos = [
+    {
+        nombre: "Torta Personalizada",
+        descripcion: "Diseñadas para cumpleaños, bodas y ocasiones especiales.",
+        imagen: "img/pastel.jpg",
+        emoji: "🎂"
+    },
+    {
+        nombre: "Cupcakes",
+        descripcion: "Deliciosos cupcakes con diferentes sabores y decoraciones.",
+        imagen: "img/cupcakes.jpg",
+        emoji: "🧁"
+    },
+    {
+        nombre: "Brownies",
+        descripcion: "Brownies artesanales preparados con ingredientes de alta calidad.",
+        imagen: "img/brownies.jpg",
+        emoji: "🍫"
+    },
+    {
+        nombre: "Cheesecakes",
+        descripcion: "Cheesecakes cremosos con diferentes sabores y coberturas.",
+        imagen: "img/cheesecake.jpg",
+        emoji: "🍰"
+    },
+    {
+        nombre: "Galletas Artesanales",
+        descripcion: "Galletas elaboradas con ingredientes naturales y sabores únicos.",
+        imagen: "img/galletas.jpg",
+        emoji: "🍪"
+    },
+    {
+        nombre: "Donas",
+        descripcion: "Donas esponjosas con diferentes glaseados y decoraciones.",
+        imagen: "img/donas.jpg",
+        emoji: "🍩"
+    }
+];
+
+// Mostrar productos
+
+function cargarProductos() {
+
+    const lista = document.getElementById("listaProductos");
+
+    if (!lista) return;
+
+    lista.innerHTML = "";
+
+    // Condición solicitada
+    if (productos.length === 0) {
+
+        lista.innerHTML = `
+            <div class="col-12">
+                <div class="alert alert-warning text-center">
+                    No existen productos registrados.
+                </div>
+            </div>
+        `;
+
+        return;
+    }
+
+    // Estructura repetitiva
+    productos.forEach(producto => {
+
+        lista.innerHTML += `
+
+        <div class="col-md-4">
+
+            <div class="card shadow m-3 h-100">
+
+                <img
+                    src="${producto.imagen}"
+                    class="card-img-top"
+                    alt="${producto.nombre}">
+
+                <div class="card-body text-center">
+
+                    <h4>${producto.emoji} ${producto.nombre}</h4>
+
+                    <p>${producto.descripcion}</p>
+
+                    <button class="btn btn-outline-danger">
+                        Comprar
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        `;
+
+    });
+
+}
+
+// Cargar productos al abrir la página
+cargarProductos();
+
+// ==========================
+// FORMULARIO DE PEDIDOS
+// ==========================
+
+// Obtener elementos
 
 const formulario = document.getElementById("formPedido");
 
@@ -11,7 +121,7 @@ const listaPedidos = document.getElementById("listaPedidos");
 const contador = document.getElementById("contador");
 const mensaje = document.getElementById("mensaje");
 
-// Arreglo para almacenar los pedidos
+// Arreglo de pedidos
 
 let pedidos = [];
 
@@ -136,17 +246,17 @@ categoria.addEventListener("change", validarCategoria);
 // REGISTRAR PEDIDO
 // ==========================
 
-formulario.addEventListener("submit", function(event){
+formulario.addEventListener("submit", function (event) {
 
     event.preventDefault();
 
-    let formularioValido =
+    const formularioValido =
         validarCliente() &&
         validarProducto() &&
         validarDescripcion() &&
         validarCategoria();
 
-    if(!formularioValido){
+    if (!formularioValido) {
 
         mensaje.innerHTML = `
             <div class="alert alert-danger">
@@ -189,41 +299,55 @@ formulario.addEventListener("submit", function(event){
 // MOSTRAR PEDIDOS
 // ==========================
 
-function mostrarPedidos(){
+function mostrarPedidos() {
 
     listaPedidos.innerHTML = "";
 
-    pedidos.forEach(function(pedido, indice){
+    // Condición solicitada
 
-        listaPedidos.innerHTML += `
+    if (pedidos.length === 0) {
 
-        <div class="card shadow mt-3">
+        listaPedidos.innerHTML = `
+            <div class="alert alert-info">
+                Aún no existen pedidos registrados.
+            </div>
+        `;
 
-            <div class="card-body">
+    } else {
 
-                <h5>${pedido.cliente}</h5>
+        pedidos.forEach(function (pedido, indice) {
 
-                <p><strong>Producto:</strong> ${pedido.producto}</p>
+            listaPedidos.innerHTML += `
 
-                <p><strong>Descripción:</strong> ${pedido.descripcion}</p>
+            <div class="card shadow mt-3">
 
-                <p><strong>Categoría:</strong> ${pedido.categoria}</p>
+                <div class="card-body">
 
-                <button
-                    class="btn btn-danger btn-sm"
-                    onclick="eliminarPedido(${indice})">
+                    <h5>${pedido.cliente}</h5>
 
-                    Eliminar
+                    <p><strong>Producto:</strong> ${pedido.producto}</p>
 
-                </button>
+                    <p><strong>Descripción:</strong> ${pedido.descripcion}</p>
+
+                    <p><strong>Categoría:</strong> ${pedido.categoria}</p>
+
+                    <button
+                        class="btn btn-danger btn-sm"
+                        onclick="eliminarPedido(${indice})">
+
+                        Eliminar
+
+                    </button>
+
+                </div>
 
             </div>
 
-        </div>
+            `;
 
-        `;
+        });
 
-    });
+    }
 
     contador.textContent = pedidos.length;
 
@@ -233,9 +357,9 @@ function mostrarPedidos(){
 // ELIMINAR PEDIDO
 // ==========================
 
-function eliminarPedido(indice){
+function eliminarPedido(indice) {
 
-    pedidos.splice(indice,1);
+    pedidos.splice(indice, 1);
 
     mostrarPedidos();
 
@@ -246,3 +370,6 @@ function eliminarPedido(indice){
     `;
 
 }
+
+// Mostrar estado inicial
+mostrarPedidos();

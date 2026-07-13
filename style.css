@@ -7,7 +7,7 @@ body{
 /* HEADER */
 
 header{
-    background-image:url('https://images.unsplash.com/photo-1551024601-bec78aea704b?auto=format&fit=crop&w=1200&q=80');
+    background-image:url('img/mesa\ postres.jpg');
     background-size:cover;
     background-position:center;
     color:white;
@@ -106,8 +106,8 @@ aside{
 /* FOOTER */
 
 footer{
-    background:#343a40;
-    color:white;
+    background:#81bdfa;
+    color:rgb(255, 255, 255);
     text-align:center;
     padding:20px;
 }
