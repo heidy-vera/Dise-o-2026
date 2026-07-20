@@ -1,135 +1,320 @@
+/* ===========================
+   ESTILOS GENERALES
+=========================== */
 
 body{
-    font-family: Arial, sans-serif;
-    background-color:#fff5f7;
+    font-family: Arial, Helvetica, sans-serif;
+    background:#f8f9fa;
+    color:#333;
+    scroll-behavior:smooth;
 }
 
-/* HEADER */
+/* ===========================
+   NAVBAR
+=========================== */
+
+.navbar-brand{
+    font-size:1.4rem;
+    font-weight:bold;
+}
+
+.navbar-nav .nav-link{
+    transition:0.3s;
+    font-weight:500;
+}
+
+.navbar-nav .nav-link:hover{
+    color:#ffc107 !important;
+}
+
+/* ===========================
+   HEADER
+=========================== */
 
 header{
-    background-image:url('img/mesa\ postres.jpg');
-    background-size:cover;
-    background-position:center;
-    color:white;
-    text-align:center;
-    padding:100px 20px;
-    position:relative;
+    background:linear-gradient(135deg,#ffe6e6,#fff);
+    min-height:450px;
+    display:flex;
+    align-items:center;
 }
 
-header::before{
-    content:"";
-    position:absolute;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background:rgba(0,0,0,0.4);
+header h1{
+    color:#dc3545;
 }
 
-header .container{
-    position:relative;
-    z-index:1;
+header img{
+    max-height:380px;
+    object-fit:cover;
+    border-radius:15px;
 }
 
-/* MENÚ */
+/* ===========================
+   TITULOS
+=========================== */
 
-nav{
-    box-shadow:0 2px 10px rgba(0,0,0,0.2);
+section h2{
+    font-weight:bold;
+    margin-bottom:30px;
 }
 
-/* SECCIONES */
-
-section{
-    padding:60px 0;
-}
-
-/* TARJETAS */
+/* ===========================
+   CARDS
+=========================== */
 
 .card{
+    border:none;
     transition:0.3s;
 }
 
 .card:hover{
-    transform:scale(1.03);
+
+    transform:translateY(-8px);
+
+    box-shadow:0px 10px 20px rgba(0,0,0,.2);
+
 }
 
-.card-img-top{
-    height:180px;
+.card img{
+
+    height:220px;
+
     object-fit:cover;
+
 }
 
-/* FORMULARIOS */
+.card-title{
+
+    color:#dc3545;
+
+    font-weight:bold;
+
+}
+
+/* ===========================
+   FORMULARIOS
+=========================== */
 
 form{
+
     background:white;
-    padding:25px;
-    border-radius:12px;
-    box-shadow:0 0 10px rgba(0,0,0,.1);
-}
 
-.invalid-feedback{
-    display:block;
-    font-size:14px;
-}
-
-.is-valid{
-    border:2px solid #198754 !important;
-}
-
-.is-invalid{
-    border:2px solid #dc3545 !important;
-}
-
-/* LISTA DE PEDIDOS */
-
-#listaPedidos .card{
-    margin-top:20px;
-}
-
-#listaPedidos h5{
-    color:#dc3545;
-    font-weight:bold;
-}
-
-/* ASIDE */
-
-aside{
-    background:#ffe4e1;
     padding:30px;
+
     border-radius:15px;
-    text-align:center;
-    margin:30px auto;
-    width:80%;
-    box-shadow:0 0 10px rgba(0,0,0,.1);
+
+    box-shadow:0px 5px 15px rgba(0,0,0,.1);
+
 }
 
-/* FOOTER */
+.form-label{
+
+    font-weight:bold;
+
+}
+
+.form-control:focus,
+.form-select:focus{
+
+    border-color:#dc3545;
+
+    box-shadow:0 0 0 .25rem rgba(220,53,69,.25);
+
+}
+
+/* ===========================
+   BOTONES
+=========================== */
+
+.btn{
+
+    transition:.3s;
+
+}
+
+.btn:hover{
+
+    transform:scale(1.03);
+
+}
+
+/* ===========================
+   TABLA
+=========================== */
+
+.table{
+
+    margin-top:20px;
+
+}
+
+.table thead{
+
+    text-align:center;
+
+}
+
+.table tbody td{
+
+    vertical-align:middle;
+
+}
+
+/* ===========================
+   ALERTA
+=========================== */
+
+.alert{
+
+    border-radius:10px;
+
+}
+
+/* ===========================
+   BADGE CONTADOR
+=========================== */
+
+.badge{
+
+    font-size:18px;
+
+}
+
+/* ===========================
+   PROMOCION
+=========================== */
+
+aside .card{
+
+    border-radius:15px;
+
+}
+
+/* ===========================
+   FOOTER
+=========================== */
 
 footer{
-    background:#81bdfa;
-    color:rgb(255, 255, 255);
-    text-align:center;
-    padding:20px;
+
+    margin-top:40px;
+
 }
 
-/* RESPONSIVE */
+footer p{
+
+    margin:0;
+
+}
+
+/* ===========================
+   IMAGENES
+=========================== */
+
+img{
+
+    max-width:100%;
+
+}
+
+/* ===========================
+   SPINNER
+=========================== */
+
+#spinner{
+
+    width:3rem;
+
+    height:3rem;
+
+}
+
+/* ===========================
+   MODAL
+=========================== */
+
+.modal-content{
+
+    border-radius:15px;
+
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+
+@media(max-width:992px){
+
+header{
+
+    text-align:center;
+
+}
+
+header img{
+
+    margin-top:30px;
+
+}
+
+}
 
 @media(max-width:768px){
 
-    header h1{
-        font-size:35px;
-    }
+header h1{
 
-    aside{
-        width:95%;
-    }
+    font-size:2.3rem;
 
-    .card-img-top{
-        height:150px;
-    }
+}
 
-    form{
-        width:95% !important;
-    }
+.card img{
+
+    height:200px;
+
+}
+
+form{
+
+    padding:20px;
+
+}
+
+}
+
+@media(max-width:576px){
+
+.navbar-brand{
+
+    font-size:1.1rem;
+
+}
+
+header h1{
+
+    font-size:2rem;
+
+}
+
+header{
+
+    padding:40px 0;
+
+}
+
+.card img{
+
+    height:180px;
+
+}
+
+.btn{
+
+    width:100%;
+
+}
+
+.table{
+
+    font-size:14px;
+
+}
 
 }

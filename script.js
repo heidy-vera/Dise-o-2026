@@ -1,375 +1,415 @@
-// ==========================
-// PRODUCTOS DINÁMICOS
-// ==========================
-
-const productos = [
-    {
-        nombre: "Torta Personalizada",
-        descripcion: "Diseñadas para cumpleaños, bodas y ocasiones especiales.",
-        imagen: "img/pastel.jpg",
-        emoji: "🎂"
-    },
-    {
-        nombre: "Cupcakes",
-        descripcion: "Deliciosos cupcakes con diferentes sabores y decoraciones.",
-        imagen: "img/cupcakes.jpg",
-        emoji: "🧁"
-    },
-    {
-        nombre: "Brownies",
-        descripcion: "Brownies artesanales preparados con ingredientes de alta calidad.",
-        imagen: "img/brownies.jpg",
-        emoji: "🍫"
-    },
-    {
-        nombre: "Cheesecakes",
-        descripcion: "Cheesecakes cremosos con diferentes sabores y coberturas.",
-        imagen: "img/cheesecake.jpg",
-        emoji: "🍰"
-    },
-    {
-        nombre: "Galletas Artesanales",
-        descripcion: "Galletas elaboradas con ingredientes naturales y sabores únicos.",
-        imagen: "img/galletas.jpg",
-        emoji: "🍪"
-    },
-    {
-        nombre: "Donas",
-        descripcion: "Donas esponjosas con diferentes glaseados y decoraciones.",
-        imagen: "img/donas.jpg",
-        emoji: "🍩"
-    }
-];
-
-// Mostrar productos
-
-function cargarProductos() {
-
-    const lista = document.getElementById("listaProductos");
-
-    if (!lista) return;
-
-    lista.innerHTML = "";
-
-    // Condición solicitada
-    if (productos.length === 0) {
-
-        lista.innerHTML = `
-            <div class="col-12">
-                <div class="alert alert-warning text-center">
-                    No existen productos registrados.
-                </div>
-            </div>
-        `;
-
-        return;
-    }
-
-    // Estructura repetitiva
-    productos.forEach(producto => {
-
-        lista.innerHTML += `
-
-        <div class="col-md-4">
-
-            <div class="card shadow m-3 h-100">
-
-                <img
-                    src="${producto.imagen}"
-                    class="card-img-top"
-                    alt="${producto.nombre}">
-
-                <div class="card-body text-center">
-
-                    <h4>${producto.emoji} ${producto.nombre}</h4>
-
-                    <p>${producto.descripcion}</p>
-
-                    <button class="btn btn-outline-danger">
-                        Comprar
-                    </button>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        `;
-
-    });
-
-}
-
-// Cargar productos al abrir la página
-cargarProductos();
-
-// ==========================
-// FORMULARIO DE PEDIDOS
-// ==========================
-
-// Obtener elementos
+// =====================================
+// VARIABLES
+// =====================================
 
 const formulario = document.getElementById("formPedido");
 
 const cliente = document.getElementById("cliente");
 const producto = document.getElementById("producto");
-const descripcion = document.getElementById("descripcion");
 const categoria = document.getElementById("categoria");
+const descripcion = document.getElementById("descripcion");
 
 const listaPedidos = document.getElementById("listaPedidos");
 const contador = document.getElementById("contador");
+
 const mensaje = document.getElementById("mensaje");
+const spinner = document.getElementById("spinner");
 
-// Arreglo de pedidos
+const detallePedido = document.getElementById("detallePedido");
 
-let pedidos = [];
 
-// ==========================
-// VALIDACIONES
-// ==========================
+// =====================================
+// ARRAY DE PEDIDOS
+// =====================================
 
-function validarCliente() {
+let pedidos = JSON.parse(localStorage.getItem("pedidos")) || [];
 
-    if (cliente.value.trim() === "") {
 
-        cliente.classList.remove("is-valid");
-        cliente.classList.add("is-invalid");
+// =====================================
+// MOSTRAR PEDIDOS AL CARGAR
+// =====================================
 
-        document.getElementById("errorCliente").textContent =
-            "El nombre es obligatorio.";
-
-        return false;
-    }
-
-    if (cliente.value.trim().length < 3) {
-
-        cliente.classList.remove("is-valid");
-        cliente.classList.add("is-invalid");
-
-        document.getElementById("errorCliente").textContent =
-            "Debe tener al menos 3 caracteres.";
-
-        return false;
-    }
-
-    cliente.classList.remove("is-invalid");
-    cliente.classList.add("is-valid");
-
-    return true;
-}
-
-function validarProducto() {
-
-    if (producto.value.trim() === "") {
-
-        producto.classList.remove("is-valid");
-        producto.classList.add("is-invalid");
-
-        document.getElementById("errorProducto").textContent =
-            "Ingrese un producto.";
-
-        return false;
-    }
-
-    producto.classList.remove("is-invalid");
-    producto.classList.add("is-valid");
-
-    return true;
-}
-
-function validarDescripcion() {
-
-    if (descripcion.value.trim() === "") {
-
-        descripcion.classList.remove("is-valid");
-        descripcion.classList.add("is-invalid");
-
-        document.getElementById("errorDescripcion").textContent =
-            "La descripción es obligatoria.";
-
-        return false;
-    }
-
-    if (descripcion.value.trim().length < 10) {
-
-        descripcion.classList.remove("is-valid");
-        descripcion.classList.add("is-invalid");
-
-        document.getElementById("errorDescripcion").textContent =
-            "Debe contener al menos 10 caracteres.";
-
-        return false;
-    }
-
-    descripcion.classList.remove("is-invalid");
-    descripcion.classList.add("is-valid");
-
-    return true;
-}
-
-function validarCategoria() {
-
-    if (categoria.value === "") {
-
-        categoria.classList.remove("is-valid");
-        categoria.classList.add("is-invalid");
-
-        document.getElementById("errorCategoria").textContent =
-            "Seleccione una categoría.";
-
-        return false;
-    }
-
-    categoria.classList.remove("is-invalid");
-    categoria.classList.add("is-valid");
-
-    return true;
-}
-
-// ==========================
-// EVENTOS EN TIEMPO REAL
-// ==========================
-
-cliente.addEventListener("input", validarCliente);
-cliente.addEventListener("blur", validarCliente);
-
-producto.addEventListener("input", validarProducto);
-producto.addEventListener("blur", validarProducto);
-
-descripcion.addEventListener("input", validarDescripcion);
-descripcion.addEventListener("blur", validarDescripcion);
-
-categoria.addEventListener("change", validarCategoria);
-
-// ==========================
-// REGISTRAR PEDIDO
-// ==========================
-
-formulario.addEventListener("submit", function (event) {
-
-    event.preventDefault();
-
-    const formularioValido =
-        validarCliente() &&
-        validarProducto() &&
-        validarDescripcion() &&
-        validarCategoria();
-
-    if (!formularioValido) {
-
-        mensaje.innerHTML = `
-            <div class="alert alert-danger">
-                Corrija los errores antes de registrar el pedido.
-            </div>
-        `;
-
-        return;
-    }
-
-    const pedido = {
-
-        cliente: cliente.value,
-        producto: producto.value,
-        descripcion: descripcion.value,
-        categoria: categoria.value
-
-    };
-
-    pedidos.push(pedido);
+document.addEventListener("DOMContentLoaded", () => {
 
     mostrarPedidos();
-
-    mensaje.innerHTML = `
-        <div class="alert alert-success">
-            Pedido registrado correctamente.
-        </div>
-    `;
-
-    formulario.reset();
-
-    cliente.classList.remove("is-valid");
-    producto.classList.remove("is-valid");
-    descripcion.classList.remove("is-valid");
-    categoria.classList.remove("is-valid");
 
 });
 
-// ==========================
-// MOSTRAR PEDIDOS
-// ==========================
 
-function mostrarPedidos() {
+// =====================================
+// VALIDACIONES
+// =====================================
 
-    listaPedidos.innerHTML = "";
+function validarCampo(campo, error, mensajeError){
 
-    // Condición solicitada
+    if(campo.value.trim() === ""){
 
-    if (pedidos.length === 0) {
+        campo.classList.add("is-invalid");
 
-        listaPedidos.innerHTML = `
-            <div class="alert alert-info">
-                Aún no existen pedidos registrados.
-            </div>
-        `;
+        error.textContent = mensajeError;
 
-    } else {
+        return false;
 
-        pedidos.forEach(function (pedido, indice) {
+    }else{
 
-            listaPedidos.innerHTML += `
+        campo.classList.remove("is-invalid");
 
-            <div class="card shadow mt-3">
+        campo.classList.add("is-valid");
 
-                <div class="card-body">
+        error.textContent = "";
 
-                    <h5>${pedido.cliente}</h5>
-
-                    <p><strong>Producto:</strong> ${pedido.producto}</p>
-
-                    <p><strong>Descripción:</strong> ${pedido.descripcion}</p>
-
-                    <p><strong>Categoría:</strong> ${pedido.categoria}</p>
-
-                    <button
-                        class="btn btn-danger btn-sm"
-                        onclick="eliminarPedido(${indice})">
-
-                        Eliminar
-
-                    </button>
-
-                </div>
-
-            </div>
-
-            `;
-
-        });
+        return true;
 
     }
 
-    contador.textContent = pedidos.length;
+}
+
+
+function validarFormulario(){
+
+    let valido = true;
+
+
+    valido = validarCampo(
+        cliente,
+        errorCliente,
+        "Ingrese el nombre del cliente"
+    ) && valido;
+
+
+    valido = validarCampo(
+        producto,
+        errorProducto,
+        "Ingrese el producto"
+    ) && valido;
+
+
+    valido = validarCampo(
+        descripcion,
+        errorDescripcion,
+        "Ingrese una descripción"
+    ) && valido;
+
+
+    if(categoria.value === ""){
+
+        categoria.classList.add("is-invalid");
+
+        errorCategoria.textContent =
+        "Seleccione una categoría";
+
+        valido=false;
+
+    }else{
+
+        categoria.classList.remove("is-invalid");
+
+    }
+
+
+    return valido;
 
 }
 
-// ==========================
+
+
+// =====================================
+// REGISTRAR PEDIDO
+// =====================================
+
+
+formulario.addEventListener("submit", function(e){
+
+    e.preventDefault();
+
+
+    if(!validarFormulario()){
+
+        mostrarMensaje(
+            "Complete correctamente todos los campos",
+            "danger"
+        );
+
+        return;
+
+    }
+
+
+
+    // Mostrar spinner
+
+    spinner.classList.remove("d-none");
+
+
+    setTimeout(()=>{
+
+
+        let nuevoPedido = {
+
+            id: Date.now(),
+
+            cliente: cliente.value,
+
+            producto: producto.value,
+
+            categoria: categoria.value,
+
+            descripcion: descripcion.value
+
+        };
+
+
+        pedidos.push(nuevoPedido);
+
+
+        guardarPedidos();
+
+
+        mostrarPedidos();
+
+
+
+        formulario.reset();
+
+
+        limpiarEstados();
+
+
+        spinner.classList.add("d-none");
+
+
+        mostrarMensaje(
+            "Pedido registrado correctamente",
+            "success"
+        );
+
+
+    },1500);
+
+
+
+});
+
+
+
+// =====================================
+// GUARDAR LOCALSTORAGE
+// =====================================
+
+function guardarPedidos(){
+
+    localStorage.setItem(
+        "pedidos",
+        JSON.stringify(pedidos)
+    );
+
+}
+
+
+
+// =====================================
+// MOSTRAR PEDIDOS EN TABLA
+// =====================================
+
+function mostrarPedidos(){
+
+
+    listaPedidos.innerHTML="";
+
+
+    pedidos.forEach((pedido)=>{
+
+
+        let fila = document.createElement("tr");
+
+
+        fila.innerHTML = `
+
+        <td>${pedido.cliente}</td>
+
+        <td>${pedido.producto}</td>
+
+        <td>${pedido.categoria}</td>
+
+        <td>${pedido.descripcion}</td>
+
+
+        <td>
+
+
+        <button 
+        class="btn btn-primary btn-sm me-1"
+        onclick="verPedido(${pedido.id})">
+
+        <i class="bi bi-eye"></i>
+
+        </button>
+
+
+
+        <button
+        class="btn btn-danger btn-sm"
+        onclick="eliminarPedido(${pedido.id})">
+
+        <i class="bi bi-trash"></i>
+
+        </button>
+
+
+        </td>
+
+        `;
+
+
+        listaPedidos.appendChild(fila);
+
+
+    });
+
+
+    contador.textContent = pedidos.length;
+
+
+}
+
+
+
+// =====================================
 // ELIMINAR PEDIDO
-// ==========================
+// =====================================
 
-function eliminarPedido(indice) {
+function eliminarPedido(id){
 
-    pedidos.splice(indice, 1);
+
+    pedidos = pedidos.filter(
+        pedido => pedido.id !== id
+    );
+
+
+    guardarPedidos();
 
     mostrarPedidos();
 
-    mensaje.innerHTML = `
-        <div class="alert alert-success">
-            Pedido eliminado correctamente.
-        </div>
-    `;
+
+    mostrarMensaje(
+        "Pedido eliminado correctamente",
+        "warning"
+    );
+
 
 }
 
-// Mostrar estado inicial
-mostrarPedidos();
+
+
+// =====================================
+// MODAL DETALLE PEDIDO
+// =====================================
+
+function verPedido(id){
+
+
+    let pedido = pedidos.find(
+        p => p.id === id
+    );
+
+
+    detallePedido.innerHTML = `
+
+
+    <strong>Cliente:</strong>
+    ${pedido.cliente}
+    <br><br>
+
+
+    <strong>Producto:</strong>
+    ${pedido.producto}
+    <br><br>
+
+
+    <strong>Categoría:</strong>
+    ${pedido.categoria}
+    <br><br>
+
+
+    <strong>Descripción:</strong>
+    ${pedido.descripcion}
+
+
+
+    `;
+
+
+
+    let modal = new bootstrap.Modal(
+        document.getElementById("modalPedido")
+    );
+
+
+    modal.show();
+
+
+}
+
+
+
+// =====================================
+// ALERTAS BOOTSTRAP
+// =====================================
+
+function mostrarMensaje(texto,tipo){
+
+
+    mensaje.className =
+    `alert alert-${tipo} mt-3`;
+
+
+    mensaje.textContent = texto;
+
+
+    mensaje.classList.remove("d-none");
+
+
+    setTimeout(()=>{
+
+
+        mensaje.classList.add("d-none");
+
+
+    },3000);
+
+
+}
+
+
+
+// =====================================
+// LIMPIAR ESTILOS VALIDACION
+// =====================================
+
+function limpiarEstados(){
+
+
+    let campos = [
+
+        cliente,
+
+        producto,
+
+        categoria,
+
+        descripcion
+
+    ];
+
+
+    campos.forEach(campo=>{
+
+        campo.classList.remove(
+            "is-valid",
+            "is-invalid"
+        );
+
+    });
+
+
+}
