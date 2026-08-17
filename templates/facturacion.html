@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}
+Facturación - Dulces Delicias
+{% endblock %}
+
+{% block content %}
+
+<section class="py-5">
+
+    <div class="container">
+
+        <h2 class="text-center text-danger mb-5">
+            Facturación
+        </h2>
+
+        <div class="card shadow">
+
+            <div class="card-body">
+
+                <div class="table-responsive">
+
+                    <table class="table table-striped table-hover">
+
+                        <thead class="table-danger">
+
+                            <tr>
+                                <th>N.º Factura</th>
+                                <th>Cliente</th>
+                                <th>Fecha</th>
+                                <th>Total</th>
+                                <th>Estado</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            <tr>
+                                <td>001-001-000001</td>
+                                <td>María López</td>
+                                <td>16/08/2026</td>
+                                <td>$20.00</td>
+                                <td>
+                                    <span class="badge bg-success">
+                                        Pagada
+                                    </span>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>001-001-000002</td>
+                                <td>Juan Pérez</td>
+                                <td>16/08/2026</td>
+                                <td>$12.50</td>
+                                <td>
+                                    <span class="badge bg-warning text-dark">
+                                        Pendiente
+                                    </span>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>001-001-000003</td>
+                                <td>Ana González</td>
+                                <td>16/08/2026</td>
+                                <td>$35.00</td>
+                                <td>
+                                    <span class="badge bg-success">
+                                        Pagada
+                                    </span>
+                                </td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
