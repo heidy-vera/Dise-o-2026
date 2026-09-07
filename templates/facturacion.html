@@ -14,6 +14,244 @@ Facturación - Dulces Delicias
             Facturación
         </h2>
 
+        <!-- FORMULARIO DE FACTURACIÓN -->
+
+        <div class="card shadow mb-5">
+
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0">
+                    Nueva Factura
+                </h5>
+            </div>
+
+            <div class="card-body">
+
+                <form id="formFactura">
+
+                    <div class="row g-3">
+
+                        <!-- CLIENTE -->
+
+                        <div class="col-md-6">
+
+                            <label for="cliente" class="form-label">
+                                Cliente
+                            </label>
+
+                            <select
+                                id="cliente"
+                                class="form-select"
+                                required>
+
+                                <option value="">
+                                    Seleccione un cliente
+                                </option>
+
+                                <option value="María López">
+                                    María López
+                                </option>
+
+                                <option value="Juan Pérez">
+                                    Juan Pérez
+                                </option>
+
+                                <option value="Ana González">
+                                    Ana González
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- PRODUCTO -->
+
+                        <div class="col-md-6">
+
+                            <label for="producto" class="form-label">
+                                Producto
+                            </label>
+
+                            <select
+                                id="producto"
+                                class="form-select"
+                                required>
+
+                                <option value="">
+                                    Seleccione un producto
+                                </option>
+
+                                <option
+                                    value="Torta de Chocolate"
+                                    data-precio="20">
+
+                                    Torta de Chocolate - $20.00
+
+                                </option>
+
+                                <option
+                                    value="Cheesecake"
+                                    data-precio="22">
+
+                                    Cheesecake - $22.00
+
+                                </option>
+
+                                <option
+                                    value="Cupcakes"
+                                    data-precio="12">
+
+                                    Cupcakes - $12.00
+
+                                </option>
+
+                                <option
+                                    value="Pastel de Fresa"
+                                    data-precio="25">
+
+                                    Pastel de Fresa - $25.00
+
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- CANTIDAD -->
+
+                        <div class="col-md-4">
+
+                            <label for="cantidad" class="form-label">
+                                Cantidad
+                            </label>
+
+                            <input
+                                type="number"
+                                id="cantidad"
+                                class="form-control"
+                                min="1"
+                                value="1"
+                                required>
+
+                        </div>
+
+
+                        <!-- PRECIO -->
+
+                        <div class="col-md-4">
+
+                            <label for="precio" class="form-label">
+                                Precio unitario
+                            </label>
+
+                            <input
+                                type="text"
+                                id="precio"
+                                class="form-control"
+                                value="$0.00"
+                                readonly>
+
+                        </div>
+
+
+                        <!-- SUBTOTAL -->
+
+                        <div class="col-md-4">
+
+                            <label for="subtotal" class="form-label">
+                                Subtotal
+                            </label>
+
+                            <input
+                                type="text"
+                                id="subtotal"
+                                class="form-control"
+                                value="$0.00"
+                                readonly>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- TOTALES -->
+
+                    <hr class="my-4">
+
+                    <div class="row justify-content-end">
+
+                        <div class="col-md-5">
+
+                            <p class="d-flex justify-content-between">
+
+                                <strong>Subtotal:</strong>
+
+                                <span id="mostrarSubtotal">
+                                    $0.00
+                                </span>
+
+                            </p>
+
+
+                            <p class="d-flex justify-content-between">
+
+                                <strong>IVA (15%):</strong>
+
+                                <span id="iva">
+                                    $0.00
+                                </span>
+
+                            </p>
+
+
+                            <h4 class="d-flex justify-content-between text-danger">
+
+                                <strong>Total:</strong>
+
+                                <span id="total">
+                                    $0.00
+                                </span>
+
+                            </h4>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- BOTÓN -->
+
+                    <div class="text-center mt-4">
+
+                        <button
+                            type="submit"
+                            class="btn btn-danger px-4">
+
+                            Generar Factura
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+
+                <!-- MENSAJE -->
+
+                <div
+                    id="mensajeFactura"
+                    class="alert alert-success mt-4 d-none">
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- TABLA DE FACTURAS -->
+
         <div class="card shadow">
 
             <div class="card-body">
@@ -25,51 +263,147 @@ Facturación - Dulces Delicias
                         <thead class="table-danger">
 
                             <tr>
+
                                 <th>N.º Factura</th>
                                 <th>Cliente</th>
                                 <th>Fecha</th>
                                 <th>Total</th>
                                 <th>Estado</th>
+                                <th>Acción</th>
+
                             </tr>
 
                         </thead>
 
-                        <tbody>
+
+                        <tbody id="tablaFacturas">
+
+                            <!-- FACTURA 1 -->
 
                             <tr>
-                                <td>001-001-000001</td>
-                                <td>María López</td>
-                                <td>16/08/2026</td>
-                                <td>$20.00</td>
+
                                 <td>
+                                    001-001-000001
+                                </td>
+
+                                <td>
+                                    María López
+                                </td>
+
+                                <td>
+                                    16/08/2026
+                                </td>
+
+                                <td>
+                                    $20.00
+                                </td>
+
+                                <td>
+
                                     <span class="badge bg-success">
                                         Pagada
                                     </span>
+
                                 </td>
+
+                                <td>
+
+                                    <button
+                                        class="btn btn-sm btn-danger"
+                                        onclick="eliminarFactura(this)">
+
+                                        Eliminar
+
+                                    </button>
+
+                                </td>
+
                             </tr>
 
+
+                            <!-- FACTURA 2 -->
+
                             <tr>
-                                <td>001-001-000002</td>
-                                <td>Juan Pérez</td>
-                                <td>16/08/2026</td>
-                                <td>$12.50</td>
+
                                 <td>
+                                    001-001-000002
+                                </td>
+
+                                <td>
+                                    Juan Pérez
+                                </td>
+
+                                <td>
+                                    16/08/2026
+                                </td>
+
+                                <td>
+                                    $12.50
+                                </td>
+
+                                <td>
+
                                     <span class="badge bg-warning text-dark">
                                         Pendiente
                                     </span>
+
                                 </td>
+
+                                <td>
+
+                                    <button
+                                        class="btn btn-sm btn-danger"
+                                        onclick="eliminarFactura(this)">
+
+                                        Eliminar
+
+                                    </button>
+
+                                </td>
+
                             </tr>
 
+
+                            <!-- FACTURA 3 -->
+
                             <tr>
-                                <td>001-001-000003</td>
-                                <td>Ana González</td>
-                                <td>16/08/2026</td>
-                                <td>$35.00</td>
+
                                 <td>
+                                    001-001-000003
+                                </td>
+
+                                <td>
+                                    Ana González
+                                </td>
+
+                                <td>
+                                    16/08/2026
+                                </td>
+
+                                <td>
+                                    $35.00
+                                </td>
+
+                                <td>
+
                                     <span class="badge bg-success">
                                         Pagada
                                     </span>
+
                                 </td>
+
+                                <td>
+
+                                    <button
+                                        class="btn btn-sm btn-danger"
+                                        onclick="eliminarFactura(this)">
+
+                                        Eliminar
+
+                                    </button>
+
+                                </td>
+
                             </tr>
 
                         </tbody>
@@ -85,5 +419,232 @@ Facturación - Dulces Delicias
     </div>
 
 </section>
+
+
+<!-- JAVASCRIPT -->
+
+<script>
+
+let numeroFactura = 4;
+
+
+// CALCULAR CUANDO CAMBIA EL PRODUCTO
+
+document.getElementById("producto")
+.addEventListener("change", calcularFactura);
+
+
+// CALCULAR CUANDO CAMBIA LA CANTIDAD
+
+document.getElementById("cantidad")
+.addEventListener("input", calcularFactura);
+
+
+// FUNCIÓN PARA CALCULAR
+
+function calcularFactura() {
+
+    const producto =
+        document.getElementById("producto");
+
+    const opcion =
+        producto.options[producto.selectedIndex];
+
+    const precio =
+        parseFloat(opcion.dataset.precio) || 0;
+
+    const cantidad =
+        parseInt(
+            document.getElementById("cantidad").value
+        ) || 0;
+
+    const subtotal =
+        precio * cantidad;
+
+    const iva =
+        subtotal * 0.15;
+
+    const total =
+        subtotal + iva;
+
+
+    document.getElementById("precio").value =
+        "$" + precio.toFixed(2);
+
+    document.getElementById("subtotal").value =
+        "$" + subtotal.toFixed(2);
+
+    document.getElementById("mostrarSubtotal")
+        .textContent =
+        "$" + subtotal.toFixed(2);
+
+    document.getElementById("iva")
+        .textContent =
+        "$" + iva.toFixed(2);
+
+    document.getElementById("total")
+        .textContent =
+        "$" + total.toFixed(2);
+
+}
+
+
+// REGISTRAR FACTURA
+
+document.getElementById("formFactura")
+.addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+
+    const cliente =
+        document.getElementById("cliente").value;
+
+    const producto =
+        document.getElementById("producto").value;
+
+    const cantidad =
+        parseInt(
+            document.getElementById("cantidad").value
+        );
+
+
+    if (!cliente || !producto || cantidad <= 0) {
+
+        alert("Complete todos los campos.");
+
+        return;
+
+    }
+
+
+    const productoSelect =
+        document.getElementById("producto");
+
+    const opcion =
+        productoSelect.options[
+            productoSelect.selectedIndex
+        ];
+
+
+    const precio =
+        parseFloat(opcion.dataset.precio);
+
+
+    const subtotal =
+        precio * cantidad;
+
+    const iva =
+        subtotal * 0.15;
+
+    const total =
+        subtotal + iva;
+
+
+    const tabla =
+        document.getElementById("tablaFacturas");
+
+
+    const fila =
+        document.createElement("tr");
+
+
+    fila.innerHTML = `
+
+        <td>
+            001-001-${String(numeroFactura).padStart(6, "0")}
+        </td>
+
+        <td>
+            ${cliente}
+        </td>
+
+        <td>
+            ${new Date().toLocaleDateString("es-EC")}
+        </td>
+
+        <td>
+            $${total.toFixed(2)}
+        </td>
+
+        <td>
+
+            <span class="badge bg-warning text-dark">
+                Pendiente
+            </span>
+
+        </td>
+
+        <td>
+
+            <button
+                class="btn btn-sm btn-danger"
+                onclick="eliminarFactura(this)">
+
+                Eliminar
+
+            </button>
+
+        </td>
+
+    `;
+
+
+    tabla.appendChild(fila);
+
+
+    numeroFactura++;
+
+
+    document.getElementById("mensajeFactura")
+        .textContent =
+        "Factura registrada correctamente.";
+
+    document.getElementById("mensajeFactura")
+        .classList.remove("d-none");
+
+
+    document.getElementById("formFactura")
+        .reset();
+
+
+    document.getElementById("precio").value =
+        "$0.00";
+
+    document.getElementById("subtotal").value =
+        "$0.00";
+
+    document.getElementById("mostrarSubtotal")
+        .textContent =
+        "$0.00";
+
+    document.getElementById("iva")
+        .textContent =
+        "$0.00";
+
+    document.getElementById("total")
+        .textContent =
+        "$0.00";
+
+});
+
+
+// ELIMINAR FACTURA
+
+function eliminarFactura(boton) {
+
+    if (
+        confirm(
+            "¿Está seguro de eliminar esta factura?"
+        )
+    ) {
+
+        boton.closest("tr").remove();
+
+    }
+
+}
+
+</script>
 
 {% endblock %}

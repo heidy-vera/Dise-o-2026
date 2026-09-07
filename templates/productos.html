@@ -16,29 +16,51 @@ Productos - Dulces Delicias
 
         <div class="row g-4">
 
-            <!-- Pasteles -->
+            {% for producto in productos %}
+
             <div class="col-md-6 col-lg-4">
+
                 <div class="card shadow h-100">
 
                     <img
-                        src="{{ url_for('static', filename='img/pastel.jpg') }}"
+                        src="{{ url_for('static', filename='img/' + producto.imagen) }}"
                         class="card-img-top"
-                        alt="Pasteles">
+                        alt="{{ producto.nombre }}">
 
                     <div class="card-body text-center">
 
                         <h5 class="card-title">
-                            🎂 Pasteles
+                            {{ producto.icono }} {{ producto.nombre|upper }}
                         </h5>
 
                         <p class="card-text">
-                            Pasteles personalizados para cumpleaños,
-                            bodas y eventos especiales.
+                            {{ producto.descripcion }}
                         </p>
 
                         <p class="fw-bold text-danger">
-                            Desde $20.00
+                            Desde ${{ "%.2f"|format(producto.precio) }}
                         </p>
+
+                        <p>
+                            <strong>Stock:</strong>
+                            {{ producto.stock }}
+                        </p>
+
+                        {% if producto.stock > 0 %}
+
+                            <span class="badge bg-success mb-3">
+                                Disponible
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-danger mb-3">
+                                Agotado
+                            </span>
+
+                        {% endif %}
+
+                        <br>
 
                         <a
                             href="{{ url_for('inicio') }}#registro"
@@ -47,183 +69,12 @@ Productos - Dulces Delicias
                         </a>
 
                     </div>
+
                 </div>
+
             </div>
 
-
-            <!-- Cupcakes -->
-            <div class="col-md-6 col-lg-4">
-                <div class="card shadow h-100">
-
-                    <img
-                        src="{{ url_for('static', filename='img/cupcakes.jpg') }}"
-                        class="card-img-top"
-                        alt="Cupcakes">
-
-                    <div class="card-body text-center">
-
-                        <h5 class="card-title">
-                            🧁 Cupcakes
-                        </h5>
-
-                        <p class="card-text">
-                            Cupcakes decorados con diferentes
-                            sabores y diseños.
-                        </p>
-
-                        <p class="fw-bold text-danger">
-                            Desde $2.50
-                        </p>
-
-                        <a
-                            href="{{ url_for('inicio') }}#registro"
-                            class="btn btn-danger">
-                            Pedir ahora
-                        </a>
-
-                    </div>
-                </div>
-            </div>
-
-
-            <!-- Galletas -->
-            <div class="col-md-6 col-lg-4">
-                <div class="card shadow h-100">
-
-                    <img
-                        src="{{ url_for('static', filename='img/galletas.jpg') }}"
-                        class="card-img-top"
-                        alt="Galletas">
-
-                    <div class="card-body text-center">
-
-                        <h5 class="card-title">
-                            🍪 Galletas
-                        </h5>
-
-                        <p class="card-text">
-                            Galletas artesanales con sabores
-                            tradicionales.
-                        </p>
-
-                        <p class="fw-bold text-danger">
-                            Desde $1.50
-                        </p>
-
-                        <a
-                            href="{{ url_for('inicio') }}#registro"
-                            class="btn btn-danger">
-                            Pedir ahora
-                        </a>
-
-                    </div>
-                </div>
-            </div>
-
-
-            <!-- Brownies -->
-            <div class="col-md-6 col-lg-4">
-                <div class="card shadow h-100">
-
-                    <img
-                        src="{{ url_for('static', filename='img/brownies.jpg') }}"
-                        class="card-img-top"
-                        alt="Brownies">
-
-                    <div class="card-body text-center">
-
-                        <h5 class="card-title">
-                            🍫 Brownies
-                        </h5>
-
-                        <p class="card-text">
-                            Brownies suaves con chocolate
-                            y diferentes toppings.
-                        </p>
-
-                        <p class="fw-bold text-danger">
-                            Desde $3.00
-                        </p>
-
-                        <a
-                            href="{{ url_for('inicio') }}#registro"
-                            class="btn btn-danger">
-                            Pedir ahora
-                        </a>
-
-                    </div>
-                </div>
-            </div>
-
-
-            <!-- Cheesecake -->
-            <div class="col-md-6 col-lg-4">
-                <div class="card shadow h-100">
-
-                    <img
-                        src="{{ url_for('static', filename='img/cheesecake.jpg') }}"
-                        class="card-img-top"
-                        alt="Cheesecake">
-
-                    <div class="card-body text-center">
-
-                        <h5 class="card-title">
-                            🍰 Cheesecake
-                        </h5>
-
-                        <p class="card-text">
-                            Cheesecake cremoso con frutas
-                            y sabores especiales.
-                        </p>
-
-                        <p class="fw-bold text-danger">
-                            Desde $15.00
-                        </p>
-
-                        <a
-                            href="{{ url_for('inicio') }}#registro"
-                            class="btn btn-danger">
-                            Pedir ahora
-                        </a>
-
-                    </div>
-                </div>
-            </div>
-
-
-            <!-- Donas -->
-            <div class="col-md-6 col-lg-4">
-                <div class="card shadow h-100">
-
-                    <img
-                        src="{{ url_for('static', filename='img/donas.jpg') }}"
-                        class="card-img-top"
-                        alt="Donas">
-
-                    <div class="card-body text-center">
-
-                        <h5 class="card-title">
-                            🍩 Donas
-                        </h5>
-
-                        <p class="card-text">
-                            Donas decoradas con chocolate,
-                            azúcar y diferentes sabores.
-                        </p>
-
-                        <p class="fw-bold text-danger">
-                            Desde $2.00
-                        </p>
-
-                        <a
-                            href="{{ url_for('inicio') }}#registro"
-                            class="btn btn-danger">
-                            Pedir ahora
-                        </a>
-
-                    </div>
-                </div>
-            </div>
+            {% endfor %}
 
         </div>
 
