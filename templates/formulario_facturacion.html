@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}
+Registrar factura - Dulces Delicias
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-8 col-lg-6">
+
+            <div class="card shadow">
+
+                <div class="card-header bg-danger text-white text-center">
+                    <h3 class="mb-0">
+                        Registrar factura
+                    </h3>
+                </div>
+
+                <div class="card-body">
+
+                    <form method="POST">
+
+                        {{ form.hidden_tag() }}
+
+                        <!-- Número de factura -->
+                        <div class="mb-3">
+
+                            {{ form.numero_factura.label(
+                                class="form-label fw-bold"
+                            ) }}
+
+                            {{ form.numero_factura(
+                                class="form-control",
+                                placeholder="001-001-000001"
+                            ) }}
+
+                            {% for error in form.numero_factura.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+
+                        </div>
+
+                        <!-- Cliente -->
+                        <div class="mb-3">
+
+                            {{ form.cliente.label(
+                                class="form-label fw-bold"
+                            ) }}
+
+                            {{ form.cliente(
+                                class="form-control",
+                                placeholder="Ingrese el nombre del cliente"
+                            ) }}
+
+                            {% for error in form.cliente.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+
+                        </div>
+
+                        <!-- Fecha -->
+                        <div class="mb-3">
+
+                            {{ form.fecha.label(
+                                class="form-label fw-bold"
+                            ) }}
+
+                            {{ form.fecha(
+                                class="form-control"
+                            ) }}
+
+                            {% for error in form.fecha.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+
+                        </div>
+
+                        <!-- Total -->
+                        <div class="mb-3">
+
+                            {{ form.total.label(
+                                class="form-label fw-bold"
+                            ) }}
+
+                            {{ form.total(
+                                class="form-control",
+                                placeholder="20.00",
+                                step="0.01"
+                            ) }}
+
+                            {% for error in form.total.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+
+                        </div>
+
+                        <!-- Estado -->
+                        <div class="mb-3">
+
+                            {{ form.estado.label(
+                                class="form-label fw-bold"
+                            ) }}
+
+                            {{ form.estado(
+                                class="form-select"
+                            ) }}
+
+                            {% for error in form.estado.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+
+                        </div>
+
+                        <!-- Botones -->
+                        <div class="d-flex justify-content-between mt-4">
+
+                            <a href="{{ url_for('facturacion') }}"
+                               class="btn btn-secondary">
+                                Cancelar
+                            </a>
+
+                            {{ form.submit(class="btn btn-danger") }}
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

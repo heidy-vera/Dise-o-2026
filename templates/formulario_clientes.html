@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}
+Registrar cliente - Dulces Delicias
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-8 col-lg-6">
+
+            <div class="card shadow">
+
+                <div class="card-header bg-danger text-white text-center">
+                    <h3 class="mb-0">
+                        Registrar cliente
+                    </h3>
+                </div>
+
+                <div class="card-body">
+
+                    <form method="POST">
+
+                        {{ form.hidden_tag() }}
+
+                        <!-- Nombre -->
+                        <div class="mb-3">
+
+                            {{ form.nombre.label(class="form-label fw-bold") }}
+
+                            {{ form.nombre(
+                                class="form-control",
+                                placeholder="Ingrese el nombre completo"
+                            ) }}
+
+                            {% for error in form.nombre.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+
+                        </div>
+
+                        <!-- Correo -->
+                        <div class="mb-3">
+
+                            {{ form.correo.label(class="form-label fw-bold") }}
+
+                            {{ form.correo(
+                                class="form-control",
+                                placeholder="ejemplo@gmail.com"
+                            ) }}
+
+                            {% for error in form.correo.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+
+                        </div>
+
+                        <!-- Teléfono -->
+                        <div class="mb-3">
+
+                            {{ form.telefono.label(class="form-label fw-bold") }}
+
+                            {{ form.telefono(
+                                class="form-control",
+                                placeholder="0991234567"
+                            ) }}
+
+                            {% for error in form.telefono.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+
+                        </div>
+
+                        <!-- Botones -->
+                        <div class="d-flex justify-content-between mt-4">
+
+                            <a href="{{ url_for('clientes') }}"
+                               class="btn btn-secondary">
+                                Cancelar
+                            </a>
+
+                            {{ form.submit(class="btn btn-danger") }}
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
