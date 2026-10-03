@@ -14,92 +14,29 @@ Proveedores - Dulces Delicias
         Gestión de Proveedores
     </h2>
 
-    <!-- Formulario para registrar proveedor -->
-    <div class="card shadow mb-4">
+    <!-- Botón para registrar proveedor -->
+    <div class="text-center mb-4">
 
-        <div class="card-header bg-danger text-white">
-            <h5 class="mb-0">
-                Registrar nuevo proveedor
-            </h5>
-        </div>
+        <a href="{{ url_for('nuevo_proveedor') }}"
+           class="btn btn-danger">
 
-        <div class="card-body">
+            <i class="bi bi-person-plus"></i>
+            Registrar nuevo proveedor
 
-            <form id="formProveedor">
-
-                <div class="row g-3">
-
-                    <div class="col-md-4">
-
-                        <label for="nombreProveedor" class="form-label">
-                            Proveedor
-                        </label>
-
-                        <input
-                            type="text"
-                            class="form-control"
-                            id="nombreProveedor"
-                            placeholder="Nombre del proveedor"
-                            required>
-
-                    </div>
-
-                    <div class="col-md-4">
-
-                        <label for="productoProveedor" class="form-label">
-                            Producto
-                        </label>
-
-                        <input
-                            type="text"
-                            class="form-control"
-                            id="productoProveedor"
-                            placeholder="Producto suministrado"
-                            required>
-
-                    </div>
-
-                    <div class="col-md-4">
-
-                        <label for="contactoProveedor" class="form-label">
-                            Contacto
-                        </label>
-
-                        <input
-                            type="tel"
-                            class="form-control"
-                            id="contactoProveedor"
-                            placeholder="0991234567"
-                            required>
-
-                    </div>
-
-                    <div class="col-12">
-
-                        <button
-                            type="submit"
-                            class="btn btn-danger w-100">
-
-                            <i class="bi bi-person-plus"></i>
-                            Registrar proveedor
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </form>
-
-            <div id="mensajeProveedor" class="mt-3"></div>
-
-        </div>
+        </a>
 
     </div>
 
-
     <!-- Tabla de proveedores -->
     <div class="card shadow">
+
+        <div class="card-header bg-danger text-white">
+
+            <h5 class="mb-0">
+                Proveedores registrados
+            </h5>
+
+        </div>
 
         <div class="card-body">
 
@@ -111,71 +48,56 @@ Proveedores - Dulces Delicias
 
                         <tr>
                             <th>ID</th>
-                            <th>Proveedor</th>
-                            <th>Producto</th>
-                            <th>Contacto</th>
-                            <th>Acción</th>
+                            <th>Empresa</th>
+                            <th>Producto suministrado</th>
+                            <th>Teléfono</th>
+                            <th>Correo</th>
                         </tr>
 
                     </thead>
 
-                    <tbody id="tablaProveedores">
+                    <tbody>
+
+                        {% for proveedor in proveedores %}
 
                         <tr>
-                            <td>001</td>
-                            <td>Distribuidora Dulce</td>
-                            <td>Harina</td>
-                            <td>0994444444</td>
+
                             <td>
-                                <button
-                                    class="btn btn-sm btn-outline-danger"
-                                    onclick="eliminarProveedor(this)">
-                                    Eliminar
-                                </button>
+                                {{ proveedor.id }}
                             </td>
+
+                            <td>
+                                {{ proveedor.empresa }}
+                            </td>
+
+                            <td>
+                                {{ proveedor.producto }}
+                            </td>
+
+                            <td>
+                                {{ proveedor.telefono }}
+                            </td>
+
+                            <td>
+                                {{ proveedor.email }}
+                            </td>
+
                         </tr>
 
-                        <tr>
-                            <td>002</td>
-                            <td>Insumos Pasteleros</td>
-                            <td>Chocolate</td>
-                            <td>0985555555</td>
-                            <td>
-                                <button
-                                    class="btn btn-sm btn-outline-danger"
-                                    onclick="eliminarProveedor(this)">
-                                    Eliminar
-                                </button>
-                            </td>
-                        </tr>
+                        {% else %}
 
                         <tr>
-                            <td>003</td>
-                            <td>Decoraciones S.A.</td>
-                            <td>Decoraciones</td>
-                            <td>0976666666</td>
-                            <td>
-                                <button
-                                    class="btn btn-sm btn-outline-danger"
-                                    onclick="eliminarProveedor(this)">
-                                    Eliminar
-                                </button>
+
+                            <td colspan="5"
+                                class="text-center text-muted">
+
+                                No hay proveedores registrados.
+
                             </td>
+
                         </tr>
 
-                        <tr>
-                            <td>004</td>
-                            <td>Frutas Amazónicas</td>
-                            <td>Frutas</td>
-                            <td>0957777777</td>
-                            <td>
-                                <button
-                                    class="btn btn-sm btn-outline-danger"
-                                    onclick="eliminarProveedor(this)">
-                                    Eliminar
-                                </button>
-                            </td>
-                        </tr>
+                        {% endfor %}
 
                     </tbody>
 
@@ -188,105 +110,8 @@ Proveedores - Dulces Delicias
     </div>
 
 </div>
-```
+
 
 </section>
-
-<script>
-
-let contadorProveedores = 5;
-
-
-// Registrar proveedor
-document.getElementById("formProveedor").addEventListener("submit", function(event) {
-
-    event.preventDefault();
-
-    const nombre = document
-        .getElementById("nombreProveedor")
-        .value
-        .trim();
-
-    const producto = document
-        .getElementById("productoProveedor")
-        .value
-        .trim();
-
-    const contacto = document
-        .getElementById("contactoProveedor")
-        .value
-        .trim();
-
-    const mensaje = document.getElementById("mensajeProveedor");
-
-
-    // Validación
-    if (nombre === "" || producto === "" || contacto === "") {
-
-        mensaje.innerHTML = `
-            <div class="alert alert-warning">
-                Complete todos los campos.
-            </div>
-        `;
-
-        return;
-    }
-
-
-    // Crear nueva fila
-    const tabla = document.getElementById("tablaProveedores");
-
-    const nuevaFila = document.createElement("tr");
-
-    nuevaFila.innerHTML = `
-        <td>${String(contadorProveedores).padStart(3, "0")}</td>
-
-        <td>${nombre}</td>
-
-        <td>${producto}</td>
-
-        <td>${contacto}</td>
-
-        <td>
-            <button
-                class="btn btn-sm btn-outline-danger"
-                onclick="eliminarProveedor(this)">
-                Eliminar
-            </button>
-        </td>
-    `;
-
-
-    tabla.appendChild(nuevaFila);
-
-    contadorProveedores++;
-
-
-    // Mensaje de éxito
-    mensaje.innerHTML = `
-        <div class="alert alert-success">
-            Proveedor registrado correctamente.
-        </div>
-    `;
-
-
-    // Limpiar formulario
-    document.getElementById("formProveedor").reset();
-
-});
-
-
-// Eliminar proveedor
-function eliminarProveedor(boton) {
-
-    if (confirm("¿Está seguro de eliminar este proveedor?")) {
-
-        boton.closest("tr").remove();
-
-    }
-
-}
-
-</script>
 
 {% endblock %}

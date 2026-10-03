@@ -1,4 +1,6 @@
 from flask import Flask, render_template, redirect, url_for, flash
+import sqlite3
+import os
 
 from forms.producto_form import ProductoForm
 from forms.cliente_form import ClienteForm
@@ -15,104 +17,188 @@ app.config["SECRET_KEY"] = "dulces-delicias-clave-secreta-2026"
 
 
 # ==========================================
-# DATOS TEMPORALES
+# CONFIGURACIÓN DE SQLITE
 # ==========================================
 
-productos_lista = [
-    {
-        "nombre": "Pasteles",
-        "descripcion": "Pasteles personalizados para cumpleaños, bodas y eventos especiales.",
-        "precio": 20.00,
-        "stock": 8,
-        "imagen": "pastel.jpg",
-        "icono": "🎂"
-    },
-    {
-        "nombre": "Cupcakes",
-        "descripcion": "Cupcakes decorados con diferentes sabores y diseños.",
-        "precio": 2.50,
-        "stock": 15,
-        "imagen": "cupcakes.jpg",
-        "icono": "🧁"
-    },
-    {
-        "nombre": "Galletas",
-        "descripcion": "Galletas artesanales con sabores tradicionales.",
-        "precio": 1.50,
-        "stock": 20,
-        "imagen": "galletas.jpg",
-        "icono": "🍪"
-    },
-    {
-        "nombre": "Brownies",
-        "descripcion": "Brownies suaves con chocolate y diferentes toppings.",
-        "precio": 3.00,
-        "stock": 10,
-        "imagen": "brownies.jpg",
-        "icono": "🍫"
-    },
-    {
-        "nombre": "Cheesecake",
-        "descripcion": "Cheesecake cremoso con frutas y sabores especiales.",
-        "precio": 15.00,
-        "stock": 0,
-        "imagen": "cheesecake.jpg",
-        "icono": "🍰"
-    },
-    {
-        "nombre": "Donas",
-        "descripcion": "Donas decoradas con chocolate, azúcar y diferentes sabores.",
-        "precio": 2.00,
-        "stock": 12,
-        "imagen": "donas.jpg",
-        "icono": "🍩"
-    }
-]
+DATABASE = os.path.join("data", "dulces_delicias.db")
 
 
-clientes_lista = [
-    {
-        "nombre": "María López",
-        "telefono": "0991234567",
-        "correo": "maria@gmail.com"
-    },
-    {
-        "nombre": "Juan Pérez",
-        "telefono": "0987654321",
-        "correo": "juan@gmail.com"
-    },
-    {
-        "nombre": "Ana Torres",
-        "telefono": "0976543210",
-        "correo": "ana@gmail.com"
-    }
-]
+def conectar_bd():
+    conn = sqlite3.connect(DATABASE)
+    conn.row_factory = sqlite3.Row
+    return conn
 
+def crear_tabla_productos():
 
-proveedores_lista = [
-    {
-        "nombre": "Distribuidora La Esperanza",
-        "producto": "Harina",
-        "telefono": "0991112233",
-        "correo": "esperanza@gmail.com"
-    },
-    {
-        "nombre": "Lácteos Andinos",
-        "producto": "Leche y queso",
-        "telefono": "0982223344",
-        "correo": "lacteos@gmail.com"
-    },
-    {
-        "nombre": "Frutas del Valle",
-        "producto": "Frutas",
-        "telefono": "0973334455",
-        "correo": "frutas@gmail.com"
-    }
-]
+    # Crear carpeta data si no existe
+    os.makedirs("data", exist_ok=True)
 
-facturas = []
+    conn = conectar_bd()
+    cursor = conn.cursor()
 
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS productos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nombre TEXT NOT NULL,
+            descripcion TEXT NOT NULL,
+            precio REAL NOT NULL,
+            stock INTEGER NOT NULL,
+            imagen TEXT,
+            icono TEXT
+        )
+    """)
 
+    conn.commit()
+    conn.close()
+def insertar_productos_iniciales():
+
+    conn = conectar_bd()
+    cursor = conn.cursor()
+
+    productos = [
+        (
+            "Pasteles",
+            "Pasteles personalizados para cumpleaños, bodas y eventos especiales.",
+            20.00,
+            8,
+            "pastel.jpg",
+            "🎂"
+        ),
+        (
+            "Cupcakes",
+            "Cupcakes decorados con diferentes sabores y diseños.",
+            2.50,
+            15,
+            "cupcakes.jpg",
+            "🧁"
+        ),
+        (
+            "Galletas",
+            "Galletas artesanales con sabores tradicionales.",
+            1.50,
+            20,
+            "galletas.jpg",
+            "🍪"
+        ),
+        (
+            "Brownies",
+            "Brownies suaves con chocolate y diferentes toppings.",
+            3.00,
+            10,
+            "brownies.jpg",
+            "🍫"
+        ),
+        (
+            "Cheesecake",
+            "Cheesecake cremoso con frutas y sabores especiales.",
+            15.00,
+            0,
+            "cheesecake.jpg",
+            "🍰"
+        ),
+        (
+            "Donas",
+            "Donas decoradas con chocolate, azúcar y diferentes sabores.",
+            2.00,
+            12,
+            "donas.jpg",
+            "🍩"
+        )
+    ]
+
+    for producto in productos:
+
+        cursor.execute("""
+            SELECT id
+            FROM productos
+            WHERE nombre = ?
+        """, (producto[0],))
+
+        existe = cursor.fetchone()
+
+        if not existe:
+
+            cursor.execute("""
+                INSERT INTO productos
+                (nombre, descripcion, precio, stock, imagen, icono)
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, producto)
+
+    conn.commit()
+    conn.close()
+def crear_tabla_clientes():
+
+    conn = conectar_bd()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS clientes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nombre TEXT NOT NULL,
+            correo TEXT NOT NULL,
+            telefono TEXT NOT NULL
+        )
+    """)
+
+    conn.commit()
+    conn.close()
+def crear_tabla_proveedores():
+    conn = conectar_bd()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS proveedores (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            empresa TEXT NOT NULL,
+            producto TEXT NOT NULL,
+            telefono TEXT NOT NULL,
+            email TEXT NOT NULL
+        )
+    """)
+
+    conn.commit()
+    conn.close() 
+def crear_tabla_facturas():
+    conn = conectar_bd()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS facturas (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            numero_factura TEXT NOT NULL,
+            cliente TEXT NOT NULL,
+            fecha TEXT NOT NULL,
+            total REAL NOT NULL,
+            estado TEXT NOT NULL
+        )
+    """)
+
+    conn.commit()
+    conn.close()
+def actualizar_tabla_facturas():
+
+    conn = conectar_bd()
+    cursor = conn.cursor()
+
+    columnas = [
+        ("producto", "TEXT"),
+        ("cantidad", "INTEGER"),
+        ("precio", "REAL"),
+        ("subtotal", "REAL"),
+        ("iva", "REAL")
+    ]
+
+    for nombre, tipo in columnas:
+
+        try:
+            cursor.execute(
+                f"ALTER TABLE facturas ADD COLUMN {nombre} {tipo}"
+            )
+        except sqlite3.OperationalError:
+            pass
+
+    conn.commit()
+    conn.close()
 # ==========================================
 # PÁGINA PRINCIPAL
 # ==========================================
@@ -127,19 +213,28 @@ def inicio():
         nombre_negocio=nombre_negocio,
         mensaje=mensaje
     )
-
-
 # ==========================================
 # MÓDULO DE PRODUCTOS
 # ==========================================
 @app.route("/productos")
 def productos():
 
+    conn = conectar_bd()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT id, nombre, descripcion, precio, stock, imagen, icono
+        FROM productos
+    """)
+
+    productos_lista = cursor.fetchall()
+
+    conn.close()
+
     return render_template(
         "productos.html",
         productos=productos_lista
     )
-
 
 # ==========================================
 # FORMULARIO DE PRODUCTOS
@@ -151,16 +246,24 @@ def nuevo_producto():
 
     if form.validate_on_submit():
 
-        nuevo = {
-            "nombre": form.nombre.data,
-            "descripcion": form.descripcion.data,
-            "precio": form.precio.data,
-            "stock": form.stock.data,
-            "imagen": "pastel.jpg",
-            "icono": "🎂"
-        }
+        conn = conectar_bd()
+        cursor = conn.cursor()
 
-        productos_lista.append(nuevo)
+        cursor.execute("""
+            INSERT INTO productos
+            (nombre, descripcion, precio, stock, imagen, icono)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (
+            form.nombre.data,
+            form.descripcion.data,
+            form.precio.data,
+            form.stock.data,
+            "nuevos.jpg",
+            "🥞"
+        ))
+
+        conn.commit()
+        conn.close()
 
         flash(
             "Producto registrado correctamente.",
@@ -181,11 +284,22 @@ def nuevo_producto():
 @app.route("/clientes")
 def clientes():
 
+    conn = conectar_bd()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT id, nombre, correo, telefono
+        FROM clientes
+    """)
+
+    clientes_lista = cursor.fetchall()
+
+    conn.close()
+
     return render_template(
         "clientes.html",
         clientes=clientes_lista
     )
-
 
 # ==========================================
 # FORMULARIO DE CLIENTES
@@ -197,13 +311,21 @@ def nuevo_cliente():
 
     if form.validate_on_submit():
 
-        nuevo = {
-            "nombre": form.nombre.data,
-            "telefono": form.telefono.data,
-            "correo": form.correo.data
-        }
+        conn = conectar_bd()
+        cursor = conn.cursor()
 
-        clientes_lista.append(nuevo)
+        cursor.execute("""
+            INSERT INTO clientes
+            (nombre, correo, telefono)
+            VALUES (?, ?, ?)
+        """, (
+            form.nombre.data,
+            form.correo.data,
+            form.telefono.data
+        ))
+
+        conn.commit()
+        conn.close()
 
         flash(
             "Cliente registrado correctamente.",
@@ -217,19 +339,27 @@ def nuevo_cliente():
         form=form
     )
 
-
 # ==========================================
 # MÓDULO DE PROVEEDORES
 # ==========================================
 @app.route("/proveedores")
 def proveedores():
+    conn = conectar_bd()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT id, empresa, producto, telefono, email
+        FROM proveedores
+    """)
+
+    proveedores_lista = cursor.fetchall()
+
+    conn.close()
 
     return render_template(
         "proveedores.html",
         proveedores=proveedores_lista
     )
-
-
 # ==========================================
 # FORMULARIO DE PROVEEDORES
 # ==========================================
@@ -240,14 +370,22 @@ def nuevo_proveedor():
 
     if form.validate_on_submit():
 
-        nuevo = {
-            "nombre": form.empresa.data,
-            "producto": form.producto.data,
-            "telefono": form.telefono.data,
-            "correo": form.email.data
-        }
+        conn = conectar_bd()
+        cursor = conn.cursor()
 
-        proveedores_lista.append(nuevo)
+        cursor.execute("""
+            INSERT INTO proveedores
+            (empresa, producto, telefono, email)
+            VALUES (?, ?, ?, ?)
+        """, (
+            form.empresa.data,
+            form.producto.data,
+            form.telefono.data,
+            form.email.data
+        ))
+
+        conn.commit()
+        conn.close()
 
         flash(
             "Proveedor registrado correctamente.",
@@ -261,19 +399,40 @@ def nuevo_proveedor():
         form=form
     )
 
-
 # ==========================================
 # MÓDULO DE FACTURACIÓN
 # ==========================================
 @app.route("/facturacion")
 def facturacion():
 
+    conn = conectar_bd()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT
+            id,
+            numero_factura,
+            cliente,
+            fecha,
+            producto,
+            cantidad,
+            precio,
+            subtotal,
+            iva,
+            total,
+            estado
+        FROM facturas
+        ORDER BY id DESC
+    """)
+
+    facturacion_lista = cursor.fetchall()
+
+    conn.close()
+
     return render_template(
-        "facturacion.html",
-        facturas=facturas
+        "facturacion_lista.html",
+        facturas=facturacion_lista
     )
-
-
 # ==========================================
 # FORMULARIO DE FACTURACIÓN
 # ==========================================
@@ -284,15 +443,57 @@ def nueva_factura():
 
     if form.validate_on_submit():
 
-        nueva = {
-            "numero_factura": form.numero_factura.data,
-            "cliente": form.cliente.data,
-            "fecha": form.fecha.data,
-            "total": form.total.data,
-            "estado": form.estado.data
-        }
+        subtotal = form.precio.data * form.cantidad.data
 
-        facturas.append(nueva)
+        # IVA del 15%
+        iva = subtotal * 0.15
+
+        # Total de la factura
+        total = subtotal + iva
+
+
+        # ==========================================
+        # GUARDAR EN SQLITE
+        # ==========================================
+
+        conn = conectar_bd()
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            INSERT INTO facturas
+            (
+                numero_factura,
+                cliente,
+                fecha,
+                producto,
+                cantidad,
+                precio,
+                subtotal,
+                iva,
+                total,
+                estado
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            form.numero_factura.data,
+            form.cliente.data,
+            form.fecha.data.strftime("%Y-%m-%d"),
+            form.producto.data,
+            form.cantidad.data,
+            form.precio.data,
+            subtotal,
+            iva,
+            total,
+            form.estado.data
+        ))
+
+        conn.commit()
+        conn.close()
+
+
+        # ==========================================
+        # MENSAJE DE CONFIRMACIÓN
+        # ==========================================
 
         flash(
             "Factura registrada correctamente.",
@@ -301,11 +502,20 @@ def nueva_factura():
 
         return redirect(url_for("facturacion"))
 
+
     return render_template(
-        "formulario_facturacion.html",
+        "facturacion.html",
         form=form
     )
-
+# ==========================================
+# INICIALIZAR BASE DE DATOS
+# ==========================================
+crear_tabla_productos()
+insertar_productos_iniciales()
+crear_tabla_clientes()
+crear_tabla_proveedores()
+crear_tabla_facturas()
+actualizar_tabla_facturas()
 
 # ==========================================
 # EJECUTAR APLICACIÓN

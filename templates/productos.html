@@ -8,91 +8,90 @@ Productos - Dulces Delicias
 
 <section class="py-5">
 
-```
-<div class="container">
+    <div class="container">
 
-    <h2 class="text-center text-danger mb-4">
-        Nuestros Productos
-    </h2>
+        <h2 class="text-center text-danger mb-4">
+            Nuestros Productos
+        </h2>
 
-    <!-- Botón para registrar un nuevo producto -->
-    <div class="text-center mb-5">
+        <!-- Botón para registrar un nuevo producto -->
+        <div class="text-center mb-5">
 
-        <a href="{{ url_for('nuevo_producto') }}"
-           class="btn btn-danger">
+            <a href="{{ url_for('nuevo_producto') }}"
+               class="btn btn-danger">
 
-            <i class="bi bi-plus-circle"></i>
-            Nuevo producto
+                <i class="bi bi-plus-circle"></i>
+                Nuevo producto
 
-        </a>
+            </a>
 
-    </div>
+        </div>
 
-    <div class="row g-4">
+        <div class="row g-4">
 
-        {% for producto in productos %}
+            {% for producto in productos %}
 
-        <div class="col-md-6 col-lg-4">
+            <div class="col-md-6 col-lg-4">
 
-            <div class="card shadow h-100">
+                <div class="card shadow h-100">
 
-                <img
-                    src="{{ url_for('static', filename='img/' + producto.imagen) }}"
-                    class="card-img-top"
-                    alt="{{ producto.nombre }}">
+                    <img
+                        src="{{ url_for('static', filename='img/' + producto.imagen) }}"
+                        class="card-img-top"
+                        alt="{{ producto.nombre }}">
 
-                <div class="card-body text-center">
+                    <div class="card-body text-center">
 
-                    <h5 class="card-title">
-                        {{ producto.icono }} {{ producto.nombre|upper }}
-                    </h5>
+                        <h5 class="card-title">
+                            {{ producto.icono }} {{ producto.nombre|upper }}
+                        </h5>
 
-                    <p class="card-text">
-                        {{ producto.descripcion }}
-                    </p>
+                        <p class="card-text">
+                            {{ producto.descripcion }}
+                        </p>
 
-                    <p class="fw-bold text-danger">
-                        Desde ${{ "%.2f"|format(producto.precio) }}
-                    </p>
+                        <p class="fw-bold text-danger">
+                            Desde ${{ "%.2f"|format(producto.precio) }}
+                        </p>
 
-                    <p>
-                        <strong>Stock:</strong>
-                        {{ producto.stock }}
-                    </p>
+                        <p>
+                            <strong>Stock:</strong>
+                            {{ producto.stock }}
+                        </p>
 
-                    {% if producto.stock > 0 %}
+                        {% if producto.stock > 0 %}
 
-                        <span class="badge bg-success mb-3">
-                            Disponible
-                        </span>
+                            <span class="badge bg-success mb-3">
+                                Disponible
+                            </span>
 
-                    {% else %}
+                        {% else %}
 
-                        <span class="badge bg-danger mb-3">
-                            Agotado
-                        </span>
+                            <span class="badge bg-danger mb-3">
+                                Agotado
+                            </span>
 
-                    {% endif %}
+                        {% endif %}
 
-                    <br>
+                        <br>
 
-                    <a
-                        href="{{ url_for('inicio') }}#registro"
-                        class="btn btn-danger">
-                        Pedir ahora
-                    </a>
+                        <a
+                            href="{{ url_for('inicio') }}#registro"
+                            class="btn btn-danger">
+                            Pedir ahora
+                        </a>
+
+                    </div>
 
                 </div>
 
             </div>
 
+            {% endfor %}
+
         </div>
 
-        {% endfor %}
-
     </div>
-
-</div>
 
 </section>
 
