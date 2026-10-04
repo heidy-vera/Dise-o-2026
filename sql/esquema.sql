@@ -104,3 +104,14 @@ CREATE TABLE IF NOT EXISTS facturas (
     estado VARCHAR(50) NOT NULL
 
 );
+
+-- ==========================================
+-- USUARIOS
+-- SEMANA 14
+-- ==========================================
+
+CREATE TABLE IF NOT EXISTS usuarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL
+);

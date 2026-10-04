@@ -31,6 +31,7 @@
 
             <ul class="navbar-nav ms-auto">
 
+                <!-- INICIO -->
                 <li class="nav-item">
                     <a class="nav-link"
                        href="{{ url_for('inicio') }}">
@@ -38,6 +39,7 @@
                     </a>
                 </li>
 
+                <!-- NOSOTROS -->
                 <li class="nav-item">
                     <a class="nav-link"
                        href="{{ url_for('inicio') }}#nosotros">
@@ -45,6 +47,7 @@
                     </a>
                 </li>
 
+                <!-- PRODUCTOS -->
                 <li class="nav-item">
                     <a class="nav-link"
                        href="{{ url_for('productos') }}">
@@ -52,6 +55,7 @@
                     </a>
                 </li>
 
+                <!-- CONTACTO -->
                 <li class="nav-item">
                     <a class="nav-link"
                        href="{{ url_for('inicio') }}#contacto">
@@ -59,6 +63,7 @@
                     </a>
                 </li>
 
+                <!-- PEDIDOS -->
                 <li class="nav-item">
                     <a class="nav-link"
                        href="{{ url_for('inicio') }}#registro">
@@ -66,6 +71,7 @@
                     </a>
                 </li>
 
+                <!-- CLIENTES -->
                 <li class="nav-item">
                     <a class="nav-link"
                        href="{{ url_for('clientes') }}">
@@ -73,6 +79,7 @@
                     </a>
                 </li>
 
+                <!-- PROVEEDORES -->
                 <li class="nav-item">
                     <a class="nav-link"
                        href="{{ url_for('proveedores') }}">
@@ -80,12 +87,77 @@
                     </a>
                 </li>
 
+                <!-- FACTURACIÓN -->
                 <li class="nav-item">
                     <a class="nav-link"
                        href="{{ url_for('facturacion') }}">
                         Facturación
                     </a>
                 </li>
+
+                <!-- ========================= -->
+                <!-- USUARIO AUTENTICADO -->
+                <!-- ========================= -->
+
+                {% if current_user.is_authenticated %}
+
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           href="{{ url_for('dashboard') }}">
+
+                            <i class="bi bi-speedometer2"></i>
+                            Dashboard
+
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <span class="nav-link">
+
+                            <i class="bi bi-person-circle"></i>
+
+                            {{ current_user.usuario }}
+
+                        </span>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           href="{{ url_for('logout') }}">
+
+                            <i class="bi bi-box-arrow-right"></i>
+                            Cerrar sesión
+
+                        </a>
+                    </li>
+
+                {% else %}
+
+                    <!-- ========================= -->
+                    <!-- USUARIO NO AUTENTICADO -->
+                    <!-- ========================= -->
+
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           href="{{ url_for('login') }}">
+
+                            <i class="bi bi-box-arrow-in-right"></i>
+                            Iniciar sesión
+
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           href="{{ url_for('registro') }}">
+
+                            <i class="bi bi-person-plus"></i>
+                            Registrarse
+
+                        </a>
+                    </li>
+
+                {% endif %}
 
             </ul>
 

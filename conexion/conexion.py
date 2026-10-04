@@ -5,7 +5,7 @@ def conectar_bd():
     conexion = mysql.connector.connect(
         host="localhost",
         user="root",
-        password="Dulces2026!",
+        password="Tu_contraseña-aqui",
         database="dulces_delicias"
     )
 
