@@ -35,6 +35,7 @@ Productos - Dulces Delicias
 
                 <div class="card shadow h-100">
 
+                    <!-- Imagen del producto -->
                     <img
                         src="{{ url_for('static', filename='img/' + producto.imagen) }}"
                         class="card-img-top"
@@ -42,23 +43,34 @@ Productos - Dulces Delicias
 
                     <div class="card-body text-center">
 
+                        <!-- Nombre -->
                         <h5 class="card-title">
                             {{ producto.icono }} {{ producto.nombre|upper }}
                         </h5>
 
+                        <!-- Descripción -->
                         <p class="card-text">
                             {{ producto.descripcion }}
                         </p>
 
+                        <!-- Precio -->
                         <p class="fw-bold text-danger">
                             Desde ${{ "%.2f"|format(producto.precio) }}
                         </p>
 
+                        <!-- Stock -->
                         <p>
                             <strong>Stock:</strong>
                             {{ producto.stock }}
                         </p>
 
+                        <!-- Proveedor -->
+                        <p>
+                            <strong>Proveedor:</strong>
+                            {{ producto.proveedor or "Sin proveedor" }}
+                        </p>
+
+                        <!-- Disponibilidad -->
                         {% if producto.stock > 0 %}
 
                             <span class="badge bg-success mb-3">
@@ -75,11 +87,44 @@ Productos - Dulces Delicias
 
                         <br>
 
+                        <!-- Botón Pedir ahora -->
                         <a
                             href="{{ url_for('inicio') }}#registro"
-                            class="btn btn-danger">
+                            class="btn btn-danger mb-2">
+
                             Pedir ahora
+
                         </a>
+
+                        <br>
+
+                        <!-- Botón Editar -->
+                        <a
+                            href="{{ url_for('editar_producto', id=producto.id) }}"
+                            class="btn btn-warning btn-sm">
+
+                            <i class="bi bi-pencil"></i>
+                            Editar
+
+                        </a>
+
+                        <!-- Botón Eliminar -->
+                        <form
+                            action="{{ url_for('eliminar_producto', id=producto.id) }}"
+                            method="POST"
+                            class="d-inline"
+                            onsubmit="return confirm('¿Está seguro de eliminar este producto?');">
+
+                            <button
+                                type="submit"
+                                class="btn btn-danger btn-sm">
+
+                                <i class="bi bi-trash"></i>
+                                Eliminar
+
+                            </button>
+
+                        </form>
 
                     </div>
 
