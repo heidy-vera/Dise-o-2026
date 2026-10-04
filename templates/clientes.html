@@ -8,107 +8,137 @@ Clientes - Dulces Delicias
 
 <section class="py-5">
 
-    <div class="container">
+```
+<div class="container">
 
-        <h2 class="text-center text-danger mb-5">
-            Gestión de Clientes
-        </h2>
+    <h2 class="text-center text-danger mb-5">
+        Gestión de Clientes
+    </h2>
 
-        <!-- Botón para registrar un nuevo cliente -->
-        <div class="text-center mb-4">
+    <!-- Botón para registrar un nuevo cliente -->
+    <div class="text-center mb-4">
 
-            <a href="{{ url_for('nuevo_cliente') }}"
-               class="btn btn-danger">
+        <a href="{{ url_for('nuevo_cliente') }}"
+           class="btn btn-danger">
 
-                <i class="bi bi-person-plus"></i>
-                Registrar nuevo cliente
+            <i class="bi bi-person-plus"></i>
+            Registrar nuevo cliente
 
-            </a>
+        </a>
+
+    </div>
+
+    <!-- Tabla de clientes -->
+
+    <div class="card shadow">
+
+        <div class="card-header bg-danger text-white">
+
+            <h5 class="mb-0">
+                Clientes registrados
+            </h5>
 
         </div>
 
+        <div class="card-body">
 
-        <!-- Tabla de clientes -->
+            <div class="table-responsive">
 
-        <div class="card shadow">
+                <table class="table table-striped table-hover">
 
-            <div class="card-header bg-danger text-white">
+                    <thead class="table-danger">
 
-                <h5 class="mb-0">
-                    Clientes registrados
-                </h5>
+                        <tr>
 
-            </div>
+                            <th>ID</th>
+                            <th>Cliente</th>
+                            <th>Correo</th>
+                            <th>Teléfono</th>
+                            <th>Acciones</th>
 
-            <div class="card-body">
+                        </tr>
 
-                <div class="table-responsive">
+                    </thead>
 
-                    <table class="table table-striped table-hover">
+                    <tbody>
 
-                        <thead class="table-danger">
+                        {% for cliente in clientes %}
 
-                            <tr>
+                        <tr>
 
-                                <th>ID</th>
-                                <th>Cliente</th>
-                                <th>Correo</th>
-                                <th>Teléfono</th>
+                            <td>
+                                {{ cliente.id }}
+                            </td>
 
-                            </tr>
+                            <td>
+                                {{ cliente.nombre }}
+                            </td>
 
-                        </thead>
+                            <td>
+                                {{ cliente.correo }}
+                            </td>
 
-                        <tbody>
+                            <td>
+                                {{ cliente.telefono }}
+                            </td>
 
-                            {% for cliente in clientes %}
+                            <td>
 
-                            <tr>
+                                <!-- Botón modificar -->
+                                <a href="{{ url_for('editar_cliente', id=cliente.id) }}"
+                                   class="btn btn-warning btn-sm">
 
-                                <td>
-                                    {{ cliente.id }}
-                                </td>
+                                    <i class="bi bi-pencil"></i>
+                                    Modificar
 
-                                <td>
-                                    {{ cliente.nombre }}
-                                </td>
+                                </a>
 
-                                <td>
-                                    {{ cliente.correo }}
-                                </td>
+                                <!-- Formulario eliminar -->
+                               <form method="POST"
+                                     action="{{ url_for('eliminar_cliente', id=cliente.id) }}"
+                                    class="d-inline m-0 p-0">
 
-                                <td>
-                                    {{ cliente.telefono }}
-                                </td>
+                                   <button type="submit"
+                                             class="btn btn-danger btn-sm"
+                                             onclick="return confirm('¿Está seguro de eliminar este cliente?');">
 
-                            </tr>
+                                        <i class="bi bi-trash"></i>
+                                         Eliminar
 
-                            {% else %}
+                                    </button>
 
-                            <tr>
+                                </form>
 
-                                <td colspan="4"
-                                    class="text-center text-muted">
+                            </td>
 
-                                    No hay clientes registrados.
+                        </tr>
 
-                                </td>
+                        {% else %}
 
-                            </tr>
+                        <tr>
 
-                            {% endfor %}
+                            <td colspan="5"
+                                class="text-center text-muted">
 
-                        </tbody>
+                                No hay clientes registrados.
 
-                    </table>
+                            </td>
 
-                </div>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
 
             </div>
 
         </div>
 
     </div>
+
+</div>
 
 </section>
 

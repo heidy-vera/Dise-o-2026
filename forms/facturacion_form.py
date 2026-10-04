@@ -25,13 +25,21 @@ class FacturacionForm(FlaskForm):
             )
         ]
     )
+
     # ==========================================
     # CLIENTE
     # ==========================================
 
-    cliente = StringField(
-        "Cliente"
+    cliente = SelectField(
+        "Cliente",
+        coerce=int,
+        validators=[
+            DataRequired(
+                message="Seleccione un cliente."
+            )
+        ]
     )
+
     # ==========================================
     # FECHA
     # ==========================================
@@ -45,18 +53,21 @@ class FacturacionForm(FlaskForm):
         ],
         format="%Y-%m-%d"
     )
+
     # ==========================================
     # PRODUCTO
     # ==========================================
 
-    producto = StringField(
+    producto = SelectField(
         "Producto",
+        coerce=int,
         validators=[
             DataRequired(
-                message="El producto es obligatorio."
+                message="Seleccione un producto."
             )
         ]
     )
+
     # ==========================================
     # CANTIDAD
     # ==========================================
@@ -73,6 +84,7 @@ class FacturacionForm(FlaskForm):
             )
         ]
     )
+
     # ==========================================
     # PRECIO UNITARIO
     # ==========================================
@@ -89,6 +101,7 @@ class FacturacionForm(FlaskForm):
             )
         ]
     )
+
     # ==========================================
     # ESTADO
     # ==========================================

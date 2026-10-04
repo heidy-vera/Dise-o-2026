@@ -63,16 +63,12 @@ Registrar factura - Dulces Delicias
 
                         <div class="mb-3">
 
-                            <label class="form-label fw-bold">
-                                Cliente
-                                <span class="text-muted small">
-                                    (Opcional)
-                                </span>
-                            </label>
+                            {{ form.cliente.label(
+                                class="form-label fw-bold"
+                            ) }}
 
                             {{ form.cliente(
-                                class="form-control",
-                                placeholder="Ingrese el nombre del cliente"
+                                class="form-select"
                             ) }}
 
                             {% for error in form.cliente.errors %}
@@ -122,8 +118,8 @@ Registrar factura - Dulces Delicias
                             ) }}
 
                             {{ form.producto(
-                                class="form-control",
-                                placeholder="Ejemplo: Pastel de chocolate"
+                                class="form-select",
+                                id="producto"
                             ) }}
 
                             {% for error in form.producto.errors %}
@@ -166,7 +162,7 @@ Registrar factura - Dulces Delicias
 
 
                         <!-- ==================================
-                             PRECIO
+                             PRECIO UNITARIO
                         =================================== -->
 
                         <div class="mb-3">
@@ -175,13 +171,24 @@ Registrar factura - Dulces Delicias
                                 class="form-label fw-bold"
                             ) }}
 
-                            {{ form.precio(
-                                class="form-control",
-                                min="0.01",
-                                step="0.01",
-                                placeholder="Ejemplo: 20.00",
-                                id="precio"
-                            ) }}
+                            <div class="input-group">
+
+                                <span class="input-group-text">
+                                    $
+                                </span>
+
+                                {{ form.precio(
+                                    class="form-control",
+                                    id="precio",
+                                    readonly=true
+                                ) }}
+
+                            </div>
+
+                            <small class="text-muted">
+                                El precio se obtiene automáticamente
+                                del producto seleccionado.
+                            </small>
 
                             {% for error in form.precio.errors %}
 
@@ -313,80 +320,155 @@ Registrar factura - Dulces Delicias
 
 
 <!-- ==========================================
-     CÁLCULO AUTOMÁTICO
+     JAVASCRIPT DE FACTURACIÓN
 ========================================== -->
 
 <script>
 
-    // Obtener los campos
-    const cantidad =
+    // ==========================================
+    // PRECIOS DE LOS PRODUCTOS
+    // ==========================================
+
+    const preciosProductos = {
+
+        {% for producto in productos_lista %}
+
+        "{{ producto.id }}":
+            Number("{{ producto.precio }}"),
+
+        {% endfor %}
+
+    };
+
+
+    // ==========================================
+    // ELEMENTOS DEL FORMULARIO
+    // ==========================================
+
+    const productoSelect =
+        document.getElementById("producto");
+
+    const cantidadInput =
         document.getElementById("cantidad");
 
-    const precio =
+    const precioInput =
         document.getElementById("precio");
 
-
-    // Obtener los resultados
-    const subtotal =
+    const subtotalElement =
         document.getElementById("subtotal");
 
-    const iva =
+    const ivaElement =
         document.getElementById("iva");
 
-    const total =
+    const totalElement =
         document.getElementById("total");
 
 
-    // Función para calcular
-    function calcularFactura() {
+    // ==========================================
+    // ACTUALIZAR PRECIO
+    // ==========================================
 
-        const cantidadValor =
-            parseFloat(cantidad.value) || 0;
+    function actualizarPrecio() {
 
-        const precioValor =
-            parseFloat(precio.value) || 0;
-
-
-        // Subtotal
-        const subtotalValor =
-            cantidadValor * precioValor;
+        const productoId =
+            productoSelect.value;
 
 
-        // IVA 15%
-        const ivaValor =
-            subtotalValor * 0.15;
+        const precioProducto =
+            preciosProductos[productoId];
 
 
-        // Total
-        const totalValor =
-            subtotalValor + ivaValor;
+        if (
+            precioProducto !== undefined &&
+            !isNaN(precioProducto)
+        ) {
+
+            precioInput.value =
+                precioProducto.toFixed(2);
+
+        } else {
+
+            precioInput.value = "";
+
+        }
 
 
-        // Mostrar resultados
-        subtotal.textContent =
-            "$" + subtotalValor.toFixed(2);
+        calcularFactura();
 
-        iva.textContent =
-            "$" + ivaValor.toFixed(2);
-
-        total.textContent =
-            "$" + totalValor.toFixed(2);
     }
 
 
-    // Calcular cuando cambia la cantidad
-    cantidad.addEventListener(
+    // ==========================================
+    // CALCULAR FACTURA
+    // ==========================================
+
+    function calcularFactura() {
+
+        const cantidad =
+            parseFloat(
+                cantidadInput.value
+            ) || 0;
+
+
+        const precio =
+            parseFloat(
+                precioInput.value
+            ) || 0;
+
+
+        const subtotal =
+            cantidad * precio;
+
+
+        const iva =
+            subtotal * 0.15;
+
+
+        const total =
+            subtotal + iva;
+
+
+        subtotalElement.textContent =
+            "$" + subtotal.toFixed(2);
+
+
+        ivaElement.textContent =
+            "$" + iva.toFixed(2);
+
+
+        totalElement.textContent =
+            "$" + total.toFixed(2);
+
+    }
+
+
+    // ==========================================
+    // EVENTO: CAMBIAR PRODUCTO
+    // ==========================================
+
+    productoSelect.addEventListener(
+        "change",
+        actualizarPrecio
+    );
+
+
+    // ==========================================
+    // EVENTO: CAMBIAR CANTIDAD
+    // ==========================================
+
+    cantidadInput.addEventListener(
         "input",
         calcularFactura
     );
 
 
-    // Calcular cuando cambia el precio
-    precio.addEventListener(
-        "input",
-        calcularFactura
-    );
+    // ==========================================
+    // CALCULAR AL CARGAR LA PÁGINA
+    // ==========================================
+
+    actualizarPrecio();
 
 </script>
 
 {% endblock %}
+

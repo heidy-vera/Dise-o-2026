@@ -14,7 +14,6 @@ Facturación - Dulces Delicias
             Gestión de Facturación
         </h2>
 
-
         <!-- Botón registrar -->
         <div class="text-center mb-4">
 
@@ -29,7 +28,6 @@ Facturación - Dulces Delicias
 
         </div>
 
-
         <!-- Tabla -->
         <div class="card shadow">
 
@@ -40,7 +38,6 @@ Facturación - Dulces Delicias
                 </h5>
 
             </div>
-
 
             <div class="card-body">
 
@@ -63,11 +60,11 @@ Facturación - Dulces Delicias
                                 <th>IVA 15%</th>
                                 <th>Total</th>
                                 <th>Estado</th>
+                                <th>Acciones</th>
 
                             </tr>
 
                         </thead>
-
 
                         <tbody>
 
@@ -84,13 +81,19 @@ Facturación - Dulces Delicias
                                 </td>
 
                                 <td>
+
                                     {% if factura.cliente %}
+
                                         {{ factura.cliente }}
+
                                     {% else %}
+
                                         <span class="text-muted">
                                             Sin cliente
                                         </span>
+
                                     {% endif %}
+
                                 </td>
 
                                 <td>
@@ -139,6 +142,38 @@ Facturación - Dulces Delicias
 
                                 </td>
 
+                                <td>
+
+                                    <!-- Modificar -->
+                                    <a
+                                        href="{{ url_for('editar_factura', id=factura.id) }}"
+                                        class="btn btn-warning btn-sm">
+
+                                        <i class="bi bi-pencil"></i>
+                                        Modificar
+
+                                    </a>
+
+                                    <!-- Eliminar -->
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for('eliminar_factura', id=factura.id) }}"
+                                        class="d-inline m-0 p-0">
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-danger btn-sm"
+                                            onclick="return confirm('¿Está seguro de eliminar esta factura?');">
+
+                                            <i class="bi bi-trash"></i>
+                                            Eliminar
+
+                                        </button>
+
+                                    </form>
+
+                                </td>
+
                             </tr>
 
                             {% else %}
@@ -146,7 +181,7 @@ Facturación - Dulces Delicias
                             <tr>
 
                                 <td
-                                    colspan="11"
+                                    colspan="12"
                                     class="text-center text-muted">
 
                                     No hay facturas registradas.

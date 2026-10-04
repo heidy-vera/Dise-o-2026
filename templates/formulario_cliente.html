@@ -1,106 +1,111 @@
 {% extends "base.html" %}
 
 {% block title %}
-Registrar cliente - Dulces Delicias
+{{ titulo|default("Registrar cliente") }} - Dulces Delicias
 {% endblock %}
 
 {% block content %}
 
 <div class="container py-5">
+<div class="row justify-content-center">
 
-    <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
 
-        <div class="col-md-8 col-lg-6">
+        <div class="card shadow">
 
-            <div class="card shadow">
+            <div class="card-header bg-danger text-white text-center">
 
-                <div class="card-header bg-danger text-white text-center">
-                    <h3 class="mb-0">
-                        Registrar cliente
-                    </h3>
-                </div>
+                <h3 class="mb-0">
+                    {{ titulo|default("Registrar cliente") }}
+                </h3>
 
-                <div class="card-body">
+            </div>
 
-                    <form method="POST">
+            <div class="card-body">
 
-                        {{ form.hidden_tag() }}
+                <form method="POST">
 
-                        <!-- Nombre -->
-                        <div class="mb-3">
+                    {{ form.hidden_tag() }}
 
-                            {{ form.nombre.label(class="form-label fw-bold") }}
+                    <!-- Nombre -->
+                    <div class="mb-3">
 
-                            {{ form.nombre(
-                                class="form-control",
-                                placeholder="Ingrese el nombre completo"
-                            ) }}
+                        {{ form.nombre.label(class="form-label fw-bold") }}
 
-                            {% for error in form.nombre.errors %}
-                                <div class="text-danger small mt-1">
-                                    {{ error }}
-                                </div>
-                            {% endfor %}
+                        {{ form.nombre(
+                            class="form-control",
+                            placeholder="Ingrese el nombre completo"
+                        ) }}
 
-                        </div>
+                        {% for error in form.nombre.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ error }}
+                            </div>
+                        {% endfor %}
 
-                        <!-- Correo -->
-                        <div class="mb-3">
+                    </div>
 
-                            {{ form.correo.label(class="form-label fw-bold") }}
+                    <!-- Correo -->
+                    <div class="mb-3">
 
-                            {{ form.correo(
-                                class="form-control",
-                                placeholder="ejemplo@gmail.com"
-                            ) }}
+                        {{ form.correo.label(class="form-label fw-bold") }}
 
-                            {% for error in form.correo.errors %}
-                                <div class="text-danger small mt-1">
-                                    {{ error }}
-                                </div>
-                            {% endfor %}
+                        {{ form.correo(
+                            class="form-control",
+                            placeholder="ejemplo@gmail.com"
+                        ) }}
 
-                        </div>
+                        {% for error in form.correo.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ error }}
+                            </div>
+                        {% endfor %}
 
-                        <!-- Teléfono -->
-                        <div class="mb-3">
+                    </div>
 
-                            {{ form.telefono.label(class="form-label fw-bold") }}
+                    <!-- Teléfono -->
+                    <div class="mb-3">
 
-                            {{ form.telefono(
-                                class="form-control",
-                                placeholder="0991234567"
-                            ) }}
+                        {{ form.telefono.label(class="form-label fw-bold") }}
 
-                            {% for error in form.telefono.errors %}
-                                <div class="text-danger small mt-1">
-                                    {{ error }}
-                                </div>
-                            {% endfor %}
+                        {{ form.telefono(
+                            class="form-control",
+                            placeholder="0991234567"
+                        ) }}
 
-                        </div>
+                        {% for error in form.telefono.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ error }}
+                            </div>
+                        {% endfor %}
 
-                        <!-- Botones -->
-                        <div class="d-flex justify-content-between mt-4">
+                    </div>
 
-                            <a href="{{ url_for('clientes') }}"
-                               class="btn btn-secondary">
-                                Cancelar
-                            </a>
+                    <!-- Botones -->
+                    <div class="d-flex justify-content-between mt-4">
 
-                            {{ form.submit(class="btn btn-danger") }}
+                        <a href="{{ url_for('clientes') }}"
+                           class="btn btn-secondary">
 
-                        </div>
+                            Cancelar
 
-                    </form>
+                        </a>
 
-                </div>
+                        {{ form.submit(
+                            class="btn btn-danger"
+                        ) }}
+
+                    </div>
+
+                </form>
 
             </div>
 
         </div>
 
     </div>
+
+</div>
 
 </div>
 

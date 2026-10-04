@@ -1,13 +1,9 @@
+import os
+
 from flask import Flask, render_template, redirect, url_for, flash, request
+from dotenv import load_dotenv
 
-from flask_login import (
-    LoginManager,
-    login_user,
-    logout_user,
-    login_required,
-    current_user
-)
-
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from conexion.conexion import conectar_bd
@@ -21,10 +17,18 @@ from forms.login_form import LoginForm
 
 from models import Usuario
 
+# ==========================================
+# CONFIGURACIÓN DE FLASK
+# ==========================================
 
 app = Flask(__name__)
 
 app.config["SECRET_KEY"] = "dulces-delicias-clave-secreta-2026"
+
+
+# ==========================================
+# CONFIGURACIÓN DE FLASK-LOGIN
+# ==========================================
 
 login_manager = LoginManager()
 
@@ -32,20 +36,24 @@ login_manager.init_app(app)
 
 login_manager.login_view = "login"
 
+
+# ==========================================
+# CARGAR USUARIO
+# ==========================================
+
 @login_manager.user_loader
 def load_user(user_id):
 
     conexion = conectar_bd()
-    cursor = conexion.cursor(dictionary=True)
+    cursor = conexion.cursor()
 
-    cursor.execute(
-        """
-        SELECT id, usuario
+    cursor.execute("""
+        SELECT
+            id,
+            usuario
         FROM usuarios
         WHERE id = %s
-        """,
-        (user_id,)
-    )
+    """, (user_id,))
 
     usuario = cursor.fetchone()
 
@@ -53,17 +61,23 @@ def load_user(user_id):
     conexion.close()
 
     if usuario:
+
         return Usuario(
             usuario["id"],
             usuario["usuario"]
         )
 
     return None
+
+
 # ==========================================
-# REGISTRO DE USUARIOS
+# REGISTRO
 # ==========================================
 
-@app.route("/registro", methods=["GET", "POST"])
+@app.route(
+    "/registro",
+    methods=["GET", "POST"]
+)
 def registro():
 
     form = UsuarioForm()
@@ -71,9 +85,8 @@ def registro():
     if form.validate_on_submit():
 
         conexion = conectar_bd()
-        cursor = conexion.cursor(dictionary=True)
+        cursor = conexion.cursor()
 
-        # Comprobar si el usuario ya existe
         cursor.execute("""
             SELECT id
             FROM usuarios
@@ -97,12 +110,10 @@ def registro():
                 form=form
             )
 
-        # Proteger la contraseña mediante hash
         password_hash = generate_password_hash(
             form.password.data
         )
 
-        # Registrar usuario
         cursor.execute("""
             INSERT INTO usuarios
             (
@@ -125,36 +136,38 @@ def registro():
             "success"
         )
 
-        return redirect(url_for("login"))
+        return redirect(
+            url_for("login")
+        )
 
     return render_template(
         "registro.html",
         form=form
     )
+
+
 # ==========================================
-# INICIO DE SESIÓN
+# LOGIN
 # ==========================================
 
-@app.route("/login", methods=["GET", "POST"])
+@app.route(
+    "/login",
+    methods=["GET", "POST"]
+)
 def login():
 
     if current_user.is_authenticated:
-        return redirect(url_for("dashboard"))
+
+        return redirect(
+            url_for("dashboard")
+        )
 
     form = LoginForm()
-
-    print("--------------------------------")
-    print("ENTRANDO A LOGIN")
-    print("METODO:", request.method)
-    print("USUARIO RECIBIDO:", form.usuario.data)
-    print("FORMULARIO VALIDO:", form.validate_on_submit())
-    print("ERRORES DEL FORMULARIO:", form.errors)
-    print("--------------------------------")
 
     if form.validate_on_submit():
 
         conexion = conectar_bd()
-        cursor = conexion.cursor(dictionary=True)
+        cursor = conexion.cursor()
 
         cursor.execute("""
             SELECT
@@ -169,8 +182,6 @@ def login():
 
         cursor.close()
         conexion.close()
-
-        print("USUARIO EN MYSQL:", usuario)
 
         if usuario is None:
 
@@ -189,8 +200,6 @@ def login():
             form.password.data
         ):
 
-            print("LA CONTRASEÑA NO COINCIDE")
-
             flash(
                 "La contraseña es incorrecta.",
                 "danger"
@@ -208,24 +217,21 @@ def login():
 
         login_user(usuario_obj)
 
-        print("================================")
-        print("LOGIN CORRECTO")
-        print("ID:", usuario_obj.id)
-        print("USUARIO:", usuario_obj.usuario)
-        print("AUTENTICADO:", current_user.is_authenticated)
-        print("================================")
-
         flash(
             "Inicio de sesión exitoso.",
             "success"
         )
 
-        return redirect(url_for("dashboard"))
+        return redirect(
+            url_for("dashboard")
+        )
 
     return render_template(
         "login.html",
         form=form
     )
+
+
 # ==========================================
 # DASHBOARD
 # ==========================================
@@ -254,7 +260,11 @@ def logout():
         "success"
     )
 
-    return redirect(url_for("login"))
+    return redirect(
+        url_for("login")
+    )
+
+
 # ==========================================
 # PÁGINA PRINCIPAL
 # ==========================================
@@ -263,7 +273,10 @@ def logout():
 def inicio():
 
     nombre_negocio = "Dulces Delicias"
-    mensaje = "Bienvenidos a nuestra pastelería"
+
+    mensaje = (
+        "Bienvenidos a nuestra pastelería"
+    )
 
     return render_template(
         "index.html",
@@ -281,9 +294,8 @@ def inicio():
 def productos():
 
     conexion = conectar_bd()
-    cursor = conexion.cursor(dictionary=True)
+    cursor = conexion.cursor()
 
-    # Consulta relacionada entre productos y proveedores
     cursor.execute("""
         SELECT
             productos.id,
@@ -297,6 +309,7 @@ def productos():
         FROM productos
         LEFT JOIN proveedores
             ON productos.proveedor_id = proveedores.id
+        ORDER BY productos.id DESC
     """)
 
     productos_lista = cursor.fetchall()
@@ -311,10 +324,13 @@ def productos():
 
 
 # ==========================================
-# FORMULARIO DE PRODUCTOS
+# AGREGAR PRODUCTO
 # ==========================================
 
-@app.route("/productos/nuevo", methods=["GET", "POST"])
+@app.route(
+    "/productos/nuevo",
+    methods=["GET", "POST"]
+)
 @login_required
 def nuevo_producto():
 
@@ -355,7 +371,9 @@ def nuevo_producto():
             "success"
         )
 
-        return redirect(url_for("productos"))
+        return redirect(
+            url_for("productos")
+        )
 
     return render_template(
         "formulario_producto.html",
@@ -364,17 +382,19 @@ def nuevo_producto():
 
 
 # ==========================================
-# MODIFICAR PRODUCTOS
+# MODIFICAR PRODUCTO
 # ==========================================
 
-@app.route("/productos/editar/<int:id>", methods=["GET", "POST"])
+@app.route(
+    "/productos/editar/<int:id>",
+    methods=["GET", "POST"]
+)
 @login_required
 def editar_producto(id):
 
     conexion = conectar_bd()
-    cursor = conexion.cursor(dictionary=True)
+    cursor = conexion.cursor()
 
-    # Buscar el producto por ID
     cursor.execute("""
         SELECT
             id,
@@ -388,7 +408,6 @@ def editar_producto(id):
 
     producto = cursor.fetchone()
 
-    # Si el producto no existe
     if not producto:
 
         cursor.close()
@@ -399,11 +418,12 @@ def editar_producto(id):
             "danger"
         )
 
-        return redirect(url_for("productos"))
+        return redirect(
+            url_for("productos")
+        )
 
     form = ProductoForm()
 
-    # Cuando se envía el formulario
     if form.validate_on_submit():
 
         cursor.execute("""
@@ -432,14 +452,18 @@ def editar_producto(id):
             "success"
         )
 
-        return redirect(url_for("productos"))
+        return redirect(
+            url_for("productos")
+        )
 
-    # Cuando se abre el formulario
     if request.method == "GET":
 
         form.nombre.data = producto["nombre"]
+
         form.descripcion.data = producto["descripcion"]
+
         form.precio.data = producto["precio"]
+
         form.stock.data = producto["stock"]
 
     cursor.close()
@@ -453,10 +477,13 @@ def editar_producto(id):
 
 
 # ==========================================
-# ELIMINAR PRODUCTOS
+# ELIMINAR PRODUCTO
 # ==========================================
 
-@app.route("/productos/eliminar/<int:id>", methods=["POST"])
+@app.route(
+    "/productos/eliminar/<int:id>",
+    methods=["POST"]
+)
 @login_required
 def eliminar_producto(id):
 
@@ -478,7 +505,9 @@ def eliminar_producto(id):
         "success"
     )
 
-    return redirect(url_for("productos"))
+    return redirect(
+        url_for("productos")
+    )
 
 
 # ==========================================
@@ -488,8 +517,9 @@ def eliminar_producto(id):
 @app.route("/clientes")
 @login_required
 def clientes():
+
     conexion = conectar_bd()
-    cursor = conexion.cursor(dictionary=True)
+    cursor = conexion.cursor()
 
     cursor.execute("""
         SELECT
@@ -498,6 +528,7 @@ def clientes():
             correo,
             telefono
         FROM clientes
+        ORDER BY id DESC
     """)
 
     clientes_lista = cursor.fetchall()
@@ -512,10 +543,13 @@ def clientes():
 
 
 # ==========================================
-# FORMULARIO DE CLIENTES
+# AGREGAR CLIENTE
 # ==========================================
 
-@app.route("/clientes/nuevo", methods=["GET", "POST"])
+@app.route(
+    "/clientes/nuevo",
+    methods=["GET", "POST"]
+)
 @login_required
 def nuevo_cliente():
 
@@ -550,11 +584,137 @@ def nuevo_cliente():
             "success"
         )
 
-        return redirect(url_for("clientes"))
+        return redirect(
+            url_for("clientes")
+        )
 
     return render_template(
         "formulario_cliente.html",
         form=form
+    )
+
+
+# ==========================================
+# MODIFICAR CLIENTE
+# ==========================================
+
+@app.route(
+    "/clientes/editar/<int:id>",
+    methods=["GET", "POST"]
+)
+@login_required
+def editar_cliente(id):
+
+    conexion = conectar_bd()
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT
+            id,
+            nombre,
+            correo,
+            telefono
+        FROM clientes
+        WHERE id = %s
+    """, (id,))
+
+    cliente = cursor.fetchone()
+
+    if not cliente:
+
+        cursor.close()
+        conexion.close()
+
+        flash(
+            "Cliente no encontrado.",
+            "danger"
+        )
+
+        return redirect(
+            url_for("clientes")
+        )
+
+    form = ClienteForm()
+
+    if form.validate_on_submit():
+
+        cursor.execute("""
+            UPDATE clientes
+            SET
+                nombre = %s,
+                correo = %s,
+                telefono = %s
+            WHERE id = %s
+        """, (
+            form.nombre.data,
+            form.correo.data,
+            form.telefono.data,
+            id
+        ))
+
+        conexion.commit()
+
+        cursor.close()
+        conexion.close()
+
+        flash(
+            "Cliente modificado correctamente.",
+            "success"
+        )
+
+        return redirect(
+            url_for("clientes")
+        )
+
+    if request.method == "GET":
+
+        form.nombre.data = cliente["nombre"]
+
+        form.correo.data = cliente["correo"]
+
+        form.telefono.data = cliente["telefono"]
+
+    cursor.close()
+    conexion.close()
+
+    return render_template(
+        "formulario_cliente.html",
+        form=form,
+        titulo="Modificar cliente"
+    )
+
+
+# ==========================================
+# ELIMINAR CLIENTE
+# ==========================================
+
+@app.route(
+    "/clientes/eliminar/<int:id>",
+    methods=["POST"]
+)
+@login_required
+def eliminar_cliente(id):
+
+    conexion = conectar_bd()
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        DELETE FROM clientes
+        WHERE id = %s
+    """, (id,))
+
+    conexion.commit()
+
+    cursor.close()
+    conexion.close()
+
+    flash(
+        "Cliente eliminado correctamente.",
+        "success"
+    )
+
+    return redirect(
+        url_for("clientes")
     )
 
 
@@ -567,7 +727,7 @@ def nuevo_cliente():
 def proveedores():
 
     conexion = conectar_bd()
-    cursor = conexion.cursor(dictionary=True)
+    cursor = conexion.cursor()
 
     cursor.execute("""
         SELECT
@@ -577,6 +737,7 @@ def proveedores():
             telefono,
             email
         FROM proveedores
+        ORDER BY id DESC
     """)
 
     proveedores_lista = cursor.fetchall()
@@ -591,10 +752,13 @@ def proveedores():
 
 
 # ==========================================
-# FORMULARIO DE PROVEEDORES
+# AGREGAR PROVEEDOR
 # ==========================================
 
-@app.route("/proveedores/nuevo", methods=["GET", "POST"])
+@app.route(
+    "/proveedores/nuevo",
+    methods=["GET", "POST"]
+)
 @login_required
 def nuevo_proveedor():
 
@@ -631,14 +795,119 @@ def nuevo_proveedor():
             "success"
         )
 
-        return redirect(url_for("proveedores"))
+        return redirect(
+            url_for("proveedores")
+        )
 
     return render_template(
         "formulario_proveedor.html",
         form=form
     )
 
+@app.route("/proveedores/editar/<int:id>", methods=["GET", "POST"])
+@login_required
+def editar_proveedor(id):
 
+    conexion = conectar_bd()
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT id, empresa, producto, telefono, email
+        FROM proveedores
+        WHERE id = %s
+    """, (id,))
+
+    proveedor = cursor.fetchone()
+
+    if not proveedor:
+
+        cursor.close()
+        conexion.close()
+
+        flash(
+            "Proveedor no encontrado.",
+            "danger"
+        )
+
+        return redirect(
+            url_for("proveedores")
+        )
+
+    form = ProveedorForm()
+
+    if form.validate_on_submit():
+
+        cursor.execute("""
+            UPDATE proveedores
+            SET empresa = %s,
+                producto = %s,
+                telefono = %s,
+                email = %s
+            WHERE id = %s
+        """, (
+            form.empresa.data,
+            form.producto.data,
+            form.telefono.data,
+            form.email.data,
+            id
+        ))
+
+        conexion.commit()
+
+        cursor.close()
+        conexion.close()
+
+        flash(
+            "Proveedor modificado correctamente.",
+            "success"
+        )
+
+        return redirect(
+            url_for("proveedores")
+        )
+
+    if request.method == "GET":
+
+        form.empresa.data = proveedor["empresa"]
+        form.producto.data = proveedor["producto"]
+        form.telefono.data = proveedor["telefono"]
+        form.email.data = proveedor["email"]
+
+    cursor.close()
+    conexion.close()
+
+    return render_template(
+        "formulario_proveedor.html",
+        form=form,
+        titulo="Modificar proveedor"
+    )
+
+
+@app.route("/proveedores/eliminar/<int:id>", methods=["POST"])
+@login_required
+def eliminar_proveedor(id):
+
+    conexion = conectar_bd()
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        DELETE FROM proveedores
+        WHERE id = %s
+    """, (id,))
+
+    conexion.commit()
+
+    cursor.close()
+    conexion.close()
+
+    flash(
+        "Proveedor eliminado correctamente.",
+        "success"
+    )
+
+    return redirect(
+        url_for("proveedores")
+    )
 # ==========================================
 # MÓDULO DE FACTURACIÓN
 # ==========================================
@@ -648,23 +917,27 @@ def nuevo_proveedor():
 def facturacion():
 
     conexion = conectar_bd()
-    cursor = conexion.cursor(dictionary=True)
+    cursor = conexion.cursor()
 
     cursor.execute("""
         SELECT
-            id,
-            numero_factura,
-            cliente,
-            fecha,
-            producto,
-            cantidad,
-            precio,
-            subtotal,
-            iva,
-            total,
-            estado
+            facturas.id,
+            facturas.numero_factura,
+            clientes.nombre AS cliente,
+            facturas.fecha,
+            productos.nombre AS producto,
+            facturas.cantidad,
+            facturas.precio,
+            facturas.subtotal,
+            facturas.iva,
+            facturas.total,
+            facturas.estado
         FROM facturas
-        ORDER BY id DESC
+        INNER JOIN clientes
+            ON facturas.cliente_id = clientes.id
+        INNER JOIN productos
+            ON facturas.producto_id = productos.id
+        ORDER BY facturas.id DESC
     """)
 
     facturacion_lista = cursor.fetchall()
@@ -679,49 +952,116 @@ def facturacion():
 
 
 # ==========================================
-# FORMULARIO DE FACTURACIÓN
+# AGREGAR FACTURA
 # ==========================================
 
-@app.route("/facturacion/nueva", methods=["GET", "POST"])
+@app.route(
+    "/facturacion/nueva",
+    methods=["GET", "POST"]
+)
 @login_required
 def nueva_factura():
 
     form = FacturacionForm()
 
+    conexion = conectar_bd()
+    cursor = conexion.cursor()
+
+    # Cargar clientes
+
+    cursor.execute("""
+        SELECT
+            id,
+            nombre
+        FROM clientes
+        ORDER BY nombre
+    """)
+
+    clientes_lista = cursor.fetchall()
+
+    form.cliente.choices = [
+        (
+            cliente["id"],
+            cliente["nombre"]
+        )
+        for cliente in clientes_lista
+    ]
+
+    # Cargar productos
+
+    cursor.execute("""
+        SELECT
+            id,
+            nombre,
+            precio
+        FROM productos
+        ORDER BY nombre
+    """)
+
+    productos_lista = cursor.fetchall()
+
+    form.producto.choices = [
+        (
+            producto["id"],
+            producto["nombre"]
+        )
+        for producto in productos_lista
+    ]
+
+    # Validar formulario
+
     if form.validate_on_submit():
 
-        # ==========================================
-        # CÁLCULO DEL SUBTOTAL
-        # ==========================================
+        cursor.execute("""
+            SELECT
+                precio
+            FROM productos
+            WHERE id = %s
+        """, (form.producto.data,))
 
-        subtotal = form.precio.data * form.cantidad.data
+        producto = cursor.fetchone()
 
-        # ==========================================
-        # CÁLCULO DEL IVA DEL 15%
-        # ==========================================
+        if not producto:
+
+            cursor.close()
+            conexion.close()
+
+            flash(
+                "El producto seleccionado no existe.",
+                "danger"
+            )
+
+            return render_template(
+                "facturacion.html",
+                form=form,
+                productos_lista=productos_lista
+            )
+
+        # Obtener precio desde PostgreSQL
+
+        precio = float(
+            producto["precio"]
+        )
+
+        # Calcular valores
+
+        subtotal = (
+            precio * form.cantidad.data
+        )
 
         iva = subtotal * 0.15
 
-        # ==========================================
-        # CÁLCULO DEL TOTAL
-        # ==========================================
-
         total = subtotal + iva
 
-        # ==========================================
-        # GUARDAR EN MYSQL
-        # ==========================================
-
-        conexion = conectar_bd()
-        cursor = conexion.cursor()
+        # Guardar factura
 
         cursor.execute("""
             INSERT INTO facturas
             (
                 numero_factura,
-                cliente,
+                cliente_id,
+                producto_id,
                 fecha,
-                producto,
                 cantidad,
                 precio,
                 subtotal,
@@ -729,14 +1069,25 @@ def nueva_factura():
                 total,
                 estado
             )
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            VALUES (
+                %s,
+                %s,
+                %s,
+                %s,
+                %s,
+                %s,
+                %s,
+                %s,
+                %s,
+                %s
+            )
         """, (
             form.numero_factura.data,
             form.cliente.data,
-            form.fecha.data,
             form.producto.data,
+            form.fecha.data,
             form.cantidad.data,
-            form.precio.data,
+            precio,
             subtotal,
             iva,
             total,
@@ -748,26 +1099,215 @@ def nueva_factura():
         cursor.close()
         conexion.close()
 
-        # ==========================================
-        # MENSAJE DE CONFIRMACIÓN
-        # ==========================================
-
         flash(
             "Factura registrada correctamente.",
             "success"
         )
 
-        return redirect(url_for("facturacion"))
+        return redirect(
+            url_for("facturacion")
+        )
+
+    cursor.close()
+    conexion.close()
 
     return render_template(
         "facturacion.html",
-        form=form
+        form=form,
+        productos_lista=productos_lista
+    )
+@app.route("/facturacion/editar/<int:id>", methods=["GET", "POST"])
+@login_required
+def editar_factura(id):
+
+    conexion = conectar_bd()
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        SELECT
+            id,
+            numero_factura,
+            cliente_id,
+            producto_id,
+            fecha,
+            cantidad,
+            precio,
+            estado
+        FROM facturas
+        WHERE id = %s
+    """, (id,))
+
+    factura = cursor.fetchone()
+
+    if not factura:
+
+        cursor.close()
+        conexion.close()
+
+        flash(
+            "Factura no encontrada.",
+            "danger"
+        )
+
+        return redirect(
+            url_for("facturacion")
+        )
+
+    form = FacturacionForm()
+
+    # Cargar clientes
+    cursor.execute("""
+        SELECT id, nombre
+        FROM clientes
+        ORDER BY nombre
+    """)
+
+    clientes_lista = cursor.fetchall()
+
+    form.cliente.choices = [
+        (cliente["id"], cliente["nombre"])
+        for cliente in clientes_lista
+    ]
+
+    # Cargar productos
+    cursor.execute("""
+        SELECT id, nombre, precio
+        FROM productos
+        ORDER BY nombre
+    """)
+
+    productos_lista = cursor.fetchall()
+
+    form.producto.choices = [
+        (producto["id"], producto["nombre"])
+        for producto in productos_lista
+    ]
+
+    if form.validate_on_submit():
+
+        producto_id = form.producto.data
+        cantidad = form.cantidad.data
+
+        # Obtener el precio actual del producto
+        cursor.execute("""
+            SELECT precio
+            FROM productos
+            WHERE id = %s
+        """, (producto_id,))
+
+        producto = cursor.fetchone()
+
+        if not producto:
+
+            cursor.close()
+            conexion.close()
+
+            flash(
+                "Producto no encontrado.",
+                "danger"
+            )
+
+            return redirect(
+                url_for("facturacion")
+            )
+
+        precio = float(producto["precio"])
+
+        subtotal = cantidad * precio
+        iva = subtotal * 0.15
+        total = subtotal + iva
+
+        cursor.execute("""
+            UPDATE facturas
+            SET numero_factura = %s,
+                cliente_id = %s,
+                producto_id = %s,
+                fecha = %s,
+                cantidad = %s,
+                precio = %s,
+                subtotal = %s,
+                iva = %s,
+                total = %s,
+                estado = %s
+            WHERE id = %s
+        """, (
+            form.numero_factura.data,
+            form.cliente.data,
+            form.producto.data,
+            form.fecha.data,
+            cantidad,
+            precio,
+            subtotal,
+            iva,
+            total,
+            form.estado.data,
+            id
+        ))
+
+        conexion.commit()
+
+        cursor.close()
+        conexion.close()
+
+        flash(
+            "Factura modificada correctamente.",
+            "success"
+        )
+
+        return redirect(
+            url_for("facturacion")
+        )
+
+    if request.method == "GET":
+
+        form.numero_factura.data = factura["numero_factura"]
+        form.cliente.data = factura["cliente_id"]
+        form.producto.data = factura["producto_id"]
+        form.fecha.data = factura["fecha"]
+        form.cantidad.data = factura["cantidad"]
+        form.precio.data = float(factura["precio"])
+        form.estado.data = factura["estado"]
+
+    cursor.close()
+    conexion.close()
+
+    return render_template(
+        "facturacion.html",
+        form=form,
+        productos_lista=productos_lista
     )
 
+
+@app.route("/facturacion/eliminar/<int:id>", methods=["POST"])
+@login_required
+def eliminar_factura(id):
+
+    conexion = conectar_bd()
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        DELETE FROM facturas
+        WHERE id = %s
+    """, (id,))
+
+    conexion.commit()
+
+    cursor.close()
+    conexion.close()
+
+    flash(
+        "Factura eliminada correctamente.",
+        "success"
+    )
+
+    return redirect(
+        url_for("facturacion")
+    )
 
 # ==========================================
 # EJECUTAR APLICACIÓN
 # ==========================================
 
 if __name__ == "__main__":
+
     app.run(debug=True)
